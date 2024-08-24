@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-rc^*w^w&6g9_(uvx#6s*bnt!w)l0rdi%!l7mv#y%uc&x%wo5pk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    'django-server-production-b121.up.railway.app'
+]
 
 # FORM SUBMISSION
 # Comment out the following line and place your railway URL, and your production URL in the array.
@@ -93,6 +95,13 @@ DATABASES = {
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://django-server-production-b121.up.railway.app',
+]
+
+
+# CSRF_COOKIE_SECURE = True
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
