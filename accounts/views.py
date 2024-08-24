@@ -16,6 +16,3 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'accounts/login.html', {'form': form})
 
-class CustomLoginView(auth_views.LoginView):
-    template_name = 'accounts/login.html'
-    authentication_form = LoginForm
