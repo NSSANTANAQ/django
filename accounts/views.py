@@ -14,5 +14,5 @@ def login_view(request):
                 return redirect('home')  # Cambia 'home' por la URL a la que quieras redirigir al usuario después del login
     else:
         form = LoginForm()
-    return render(request, 'accounts/login.html', {'form': form})
+    return render(request, 'login.html', {'form': form})
 
