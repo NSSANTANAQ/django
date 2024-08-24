@@ -18,6 +18,7 @@ def signup_view(request):
 
 def login_view(request):
     return render(request, 'accounts/login.html')  # Asegúrate de tener el template en esta ruta
+
 class CustomLoginView(auth_views.LoginView):
     template_name = 'accounts/login.html'
     authentication_form = LoginForm
