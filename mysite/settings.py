@@ -100,6 +100,9 @@ CSRF_TRUSTED_ORIGINS = [
     'https://django-server-production-b121.up.railway.app',
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # CSRF_COOKIE_SECURE = True
 # Password validation
