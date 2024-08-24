@@ -31,3 +31,6 @@ def signup_view(request):
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
+def home(request):
+    return render(request, 'home.html')
