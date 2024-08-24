@@ -13,9 +13,11 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 return redirect('home')  # Cambia 'home' por la URL a la que quieras redirigir al usuario después del login
+            else:
+                form.add_error(None, 'Invalid username or password.')
     else:
         form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'accounts/login.html', {'form': form})
 
 def signup_view(request):
     if request.method == 'POST':
@@ -28,6 +30,8 @@ def signup_view(request):
             if user is not None:
                 login(request, user)
                 return redirect('home')  # Redirige a la página principal o al lugar que prefieras
+            else:
+                form.add_error(None, 'Invalid username or password.')
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
