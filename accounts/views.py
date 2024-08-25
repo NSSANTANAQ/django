@@ -41,5 +41,4 @@ def home(request):
 
 def custom_logout(request):
     logout(request)
-    form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'Logout.html')
