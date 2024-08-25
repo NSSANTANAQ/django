@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from .forms import SignUpForm,LoginForm
 from django.contrib import messages
+from django.contrib.auth import logout
 
 def login_view(request):
     if request.method == 'POST':
@@ -38,3 +39,7 @@ def signup_view(request):
 def home(request):
     return render(request, 'home.html')
 
+def custom_logout(request):
+    logout(request)
+    form = LoginForm()
+    return render(request, 'login.html', {'form': form})
