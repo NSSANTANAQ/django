@@ -41,4 +41,4 @@ def home(request):
 
 def custom_logout(request):
     logout(request)
-    return render(request, 'Logout.html')
+    return render(request, 'logout.html')
