@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 
 
@@ -14,8 +14,10 @@ class LoginForm(forms.Form):
         password = cleaned_data.get("password")
 
         # Aquí podrías agregar validaciones adicionales si es necesario
-        if not username or not password:
-            raise forms.ValidationError("Username and password are required.")
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if user is None:
+                raise forms.ValidationError('Invalid username or password.')
 
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
