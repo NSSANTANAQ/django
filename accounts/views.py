@@ -9,7 +9,7 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            user = authenticate(request, username=username, password=password)
+            user = authenticate(request, user=username, password=password)
             if user is not None:
                 login(request, user)
                 return redirect('home')  # Cambia 'home' por la URL a la que quieras redirigir al usuario después del login
