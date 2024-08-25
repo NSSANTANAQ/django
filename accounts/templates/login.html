@@ -5,8 +5,8 @@
 <head>
     <title>Login</title>
     {% load static %}
-    <link rel="shortcut icon" type="img/png" href="{% static 'img/favicon.png' %}">
-    <link rel="stylesheet" href="{% static 'dist/css/bootstrap.min.css' %} ">
+    <link rel="shortcut icon" type="img/png" href="{% static 'images/favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %} ">
 </head>
 <body>
 
@@ -15,7 +15,7 @@
     <div class="col">
     </div>
     <div class="col form-control">
-        <img src="{% static '/img/LOGOEPMAPAS.png' %}" class="rounded mx-auto d-block" width="200" height="200" alt="">
+        <img src="{% static '/images/LOGOEPMAPAS.png' %}" class="rounded mx-auto d-block" width="200" height="200" alt="">
       <div class="form-control justify-content-center">
         <form method="POST" class="form-control-plaintext justify-content-center">
         {% csrf_token %}
