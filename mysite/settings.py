@@ -97,7 +97,6 @@ DATABASES = {
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 
-AUTH_USER_MODEL = 'accounts.Usuario'
 
 CSRF_TRUSTED_ORIGINS = [
     'https://django-server-production-b121.up.railway.app',

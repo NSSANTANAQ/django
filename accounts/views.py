@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from .forms import SignUpForm,LoginForm
-
+from django.contrib import messages
 
 def login_view(request):
     if request.method == 'POST':
@@ -9,14 +9,19 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            user = authenticate(request, user=username, password=password)
+            user = authenticate(request, username=username, password=password)
             if user is not None:
-                login(request, user)
-                return redirect('home')  # Cambia 'home' por la URL a la que quieras redirigir al usuario después del login
+                if user.is_active:
+                    login(request, user)
+                    return redirect(
+                        'home')  # Cambia 'home' por la URL a la que quieras redirigir al usuario después del login
+                else:
+                    messages.error(request, 'Tu cuenta está desactivada.')
             else:
-                form.add_error(None, 'Invalid username or password.')
+                messages.error(request, 'Usuario o contraseña incorrectos.')
     else:
         form = LoginForm()
+
     return render(request, 'login.html', {'form': form})
 
 def signup_view(request):
