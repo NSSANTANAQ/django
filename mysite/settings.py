@@ -108,6 +108,16 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+STATIC_URL = '/static/'
+
+# Carpeta donde se recopilarán los archivos estáticos
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Si usas archivos de usuario/media, también configúralos
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
 # CSRF_COOKIE_SECURE = True
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
