@@ -87,6 +87,8 @@ DATABASES = {
         'NAME': "railway",
         'USER': "postgres",
         'PASSWORD': "XWNyYyJwiuHcXmaHxkbAozJjHZKNqTeT",
+        # 'HOST': "autorack.proxy.rlwy.net",
+        # 'PORT': "15788",
         'HOST': "postgres.railway.internal",
         'PORT': "5432",
     }
@@ -95,6 +97,7 @@ DATABASES = {
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 
+AUTH_USER_MODEL = 'accounts.Usuario'
 
 CSRF_TRUSTED_ORIGINS = [
     'https://django-server-production-b121.up.railway.app',
