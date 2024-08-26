@@ -99,8 +99,8 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 CSRF_TRUSTED_ORIGINS = [
-    'serviciosenlinea.epmapas.gob.ec',
-    'django-server-production-b121.up.railway.app',
+    'https://serviciosenlinea.epmapas.gob.ec',
+    'https://django-server-production-b121.up.railway.app',
 ]
 
 AUTHENTICATION_BACKENDS = [
