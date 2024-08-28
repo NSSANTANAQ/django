@@ -1,0 +1,53 @@
+{% extends "menu_usuarios.html" %}
+{% load static %}
+{% block content %}
+<div class="linea-con-texto"><h5>Consulta tus Cuentas:</h5></div>
+
+        <h2>Cliente : {{cliente.2}}</h2>
+        <table class="table " border="1">
+            <tr class="table table-dark">
+                <th>Cédula RUC</th>
+                <th>Nombre</th>
+                <th>Otros Campos</th> <!-- Agrega otros campos según tu modelo -->
+            </tr>
+            <tr>
+                <td>{{ cliente.1 }}</td>
+                <td>{{ cliente.2 }}</td>
+                <td>{{ cliente.3 }}</td> <!-- Agrega otros campos según tu modelo -->
+            </tr>
+        </table>
+
+
+        <h2>Detalle de la Cuenta:</h2>
+        <table class="table table-striped table-bordered border-secondary">
+            <tr class="table table-dark">
+                <th>Cuenta</th>
+                <th>Facturas Vencidas</th>
+                <th>Factura del Mes</th>
+                <th>Subtotal</th>
+                <th>Intereses</th>
+                <th>Total</th>
+
+                <!-- Agrega otros campos según tu modelo -->
+            </tr>
+            {% for cuenta in cuentas %}
+                <tr>
+                    <td>{{ cuenta.8 }}</td>
+                    <td>{{ cuenta.14 }}</td>
+                    <td>{{ cuenta.5|date:"F" }}</td>
+                    <td>{{ cuenta.12 }}</td>
+                    <td>{{ cuenta.13 }}</td>
+                    <td>{{ total }}</td>
+
+                </tr>
+             {% empty %}
+                    <!-- Si no hay resultados -->
+                    <tr>
+                        <td colspan="5" class="text-center">No se encontraron cuentas asociadas a este usuario</td>
+                    </tr>
+
+            {% endfor %}
+        </table>
+
+
+{% endblock %}

@@ -18,6 +18,9 @@ from django.urls import path, include
 from django.shortcuts import redirect
 
 urlpatterns = [
+
     path('', lambda request: redirect('login')),
     path('accounts/', include('accounts.urls')),  # Incluye las rutas de 'accounts'
+    path('cliente/', include('cliente.urls'), name="cliente"),  # Incluye las rutas de 'cliente'
+
 ]

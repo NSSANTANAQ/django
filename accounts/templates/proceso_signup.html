@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi Step Form</title>
+    {% load static %}
+    <link rel="shortcut icon" type="img/png" href="{% static 'images/favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        /* Estilo general del toast */
+.toast {
+    opacity: 0.9;
+    transition: opacity 0.5s ease-in-out;
+    border-radius: 8px;
+}
+
+/* Fondo más suave para los errores */
+.toast.bg-danger {
+    background-color: red;  /* Rojo claro */
+      /* Rojo oscuro para el texto */
+}
+
+/* Fondo para mensajes de éxito */
+.toast.bg-success {
+    background-color: #d4edda;  /* Verde claro */
+    color: #155724;  /* Verde oscuro para el texto */
+}
+
+/* Estilo para la cabecera del toast */
+.toast-header {
+    background-color: #f1f1f1;  /* Fondo gris claro */
+    color: #333;  /* Color de texto más oscuro */
+    border-bottom: 1px solid #ddd;  /* Línea divisoria */
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+/* Botón de cierre */
+.toast-header .btn-close {
+    color: #999;
+}
+
+/* Texto del cuerpo del toast */
+.toast-body.bg-danger {
+    background-color: #d4edda;
+    color: black;
+    font-size: 1rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 0.9; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 0.9; }
+    to { opacity: 0; }
+}
+
+
+        body {
+
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 500px;
+            background-color: #ffffff;
+            margin: 40px auto;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.1);
+        }
+           .form-footer{
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+           }
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .invalid {
+            border: 1px solid #ffaba5;
+        }
+
+        #nextBtn,#submitBtn,#submitBtn1,
+        #prevBtn {
+            margin: 0 15px; /* Espacio entre los botones */
+            flex: 1;
+            background-color: #009688;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        #prevBtn {
+            background-color: #ffffff;
+            color: #009688;
+            border: 1px solid #009688;
+        }
+
+        #prevBtn:hover,#submitBtn:hover,#submitBtn1:hover,
+        #nextBtn:hover {
+            background-color: #00796b;
+            color: #ffffff;
+        }
+         #submitBtn1:disabled {
+            background-color: #d0d0d0;
+            cursor: not-allowed;
+        }
+         #submitBtn:disabled {
+            background-color: #d0d0d0;
+            cursor: not-allowed;
+        }
+
+        #nextBtn:disabled {
+            background-color: #d0d0d0;
+            cursor: not-allowed;
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        #loadingMessage {
+            display: none; /* Oculto por defecto */
+            font-size: 18px;
+            color: blue;
+        }
+        .login-form {
+            margin-top: 20px;
+            max-width: 100%; /* Asegura que el formulario no exceda el ancho del contenedor */
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9; /* Color de fondo del formulario */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera para el formulario */
+        }
+
+        .step4 .form-footer {
+    display: none;
+}
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0%"
+                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+
+            </div>
+        </div>
+        <form id="cedulaForm" method="post" class="needs-validation" novalidate >
+            {% csrf_token %}
+            <!-- Step 1: Cédula or RUC -->
+            <div class="step active">
+                <label for="cedulaRuc">Cédula o RUC:</label>
+                <div class="form-floating mb-3">
+
+                <input class="form-control" type="text" id="cedulaRuc" name="cedulaRuc" placeholder="Confirmar Contraseña" required>
+                <label for="cedulaRuc"><i class="fa fa-user text-darck-50" aria-hidden="true"></i> Ingrese Cedula de Ciudadania o RUC</label>
+                </div>
+                <div style="display: flex; align-items: center;">
+    <button type="button" class="btn btn-success" id="verifyBtn" onclick="verifyCedulaRuc()">Verificar</button>
+
+    <div id="spinner" style="display: none; margin-left: 10px;" class="text-secondary spinner-border spinner-border-sm" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <div id="verificationMessage" style="margin-left: 10px; font-size: 12px; color: red;"></div>
+                    <!-- Mensaje de carga -->
+    <div id="loadingMessage" style="display: none; margin-left: 10px; font-size: 12px; color: red;">
+    Cargando, por favor espere...
+    </div>
+
+    </div>
+
+            </div>
+            <!-- Step 2: Display user data and confirm -->
+            <div class="step">
+                <p class="text-center mb-4">Step 2: Verificación de Datos</p>
+                <div id="clientDetails" class="mb-4">
+
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="dataCorrect" name="dataCorrect " onchange="checkFormValidity()">
+                    <label class="form-check-label" for="dataCorrect">Confirmo que los datos visualizados son correctos.</label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="accessEmail" name="accessEmail" onchange="checkFormValidity()">
+                    <label class="form-check-label" for="accessEmail">Confirmo que tengo acceso al correo electrónico registrado.</label>
+                </div>
+
+                <div id="messageStep2" class="message"></div>
+            </div>
+            <!-- Step 3: Additional fields -->
+            <div class="step">
+                <p class="text-center mb-4">Step 3: Registro de Usuario</p>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Cédula" readonly>
+                    <label for="username"><i class="fa fa-user" aria-hidden="true"></i> Cédula</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Correo Electrónico" readonly>
+                    <label for="email"><i class="fa fa-envelope" aria-hidden="true"></i> Correo Electrónico</label>
+                </div>
+                <div class="login-form">
+
+                    <div style=" pading: 10px; font-size: 14px;">Ingrese su contraseña de Seguridad...</div>
+                    <div class="password-requirements">
+
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="password1" name="password1" placeholder="Contraseña" required>
+                    <label for="password1"><i class="fa fa-lock" aria-hidden="true"></i> Contraseña</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirmar Contraseña" required>
+                    <label for="password2"><i class="fa fa-lock" aria-hidden="true"></i> Confirmar Contraseña</label>
+                </div>
+
+                </div>
+                <div class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="d-flex">
+    <div class="toast-body">
+      <div id="step3Message" class="step3Message" > </div>
+    </div>
+    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+</div>
+
+
+<!--                <div id="step3Message" class="step3Message" > </div>-->
+
+            </div>
+
+        <!-- Step 4: Usuario Creado con exito -->
+            <div class="step step4" id="successStep" style="display: none;">
+                <p class="text-center mb-4">Step 4: Usuario Creado con exito</p>
+                <p class="text-center mb-4">¡Felicidades!</p>
+                <p class="text-center mb-4">Has creado el usuario exitosamente.</p>
+                <div class="text-center">
+                <a type="button" id="" href="{% url 'login' %}" class="btn btn-outline-secondary">Iniciar Sesión</a>
+                </div>
+                <div id="step4Message" class="message "> </div>
+            </div>
+            <div class="form-footer">
+                <button type="button" id="prevBtn" onclick="nextPrev(-1)">Volver</button>
+                <button type="button" id="nextBtn" onclick="nextPrev(1)" disabled>Continuar</button>
+                <button type="button" id="submitBtn" style="display: none;" onclick="submitFormViaAjax()">Registrar</button>
+
+            </div>
+
+        </form>
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <strong class="me-auto">Notificación</strong>
+      <small>Ahora</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body" id="toastMessage">
+      <!-- Mensaje del toast -->
+    </div>
+  </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+       // Función para mostrar el toast
+function showToast(message, type = 'success') {
+    var toastBody = document.getElementById('toastMessage');
+    toastBody.innerHTML = message;  // Usa innerHTML para permitir HTML en el mensaje
+
+    // Configura el color del toast basado en el tipo
+    var toastElement = document.getElementById('liveToast');
+    if (type === 'success') {
+        toastElement.classList.remove('bg-danger');
+        toastElement.classList.add('bg-success');
+    } else if (type === 'errorMessages') {
+        toastElement.classList.remove('bg-success');
+        toastElement.classList.add('bg-danger');
+    }
+
+    // Usa la API de Bootstrap para mostrar el toast
+    var toast = new bootstrap.Toast(toastElement);
+    toast.show();
+}
+
+        function showErrorMessages(errors) {
+    var errorMessages = '';
+    errors.forEach(function(error) {
+        errorMessages += `<div>${error}</div>`;
+    });
+    var messageDiv = document.getElementById("step3Message");
+    messageDiv.innerHTML = errorMessages;
+    messageDiv.style.display = 'block'; // Mostrar el mensaje
+    setTimeout(function() {
+        messageDiv.style.display = 'none'; // Ocultar el mensaje después de un tiempo
+    }, 5000); // Tiempo en milisegundos (5 segundos en este caso)
+}
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+    const password1 = document.getElementById('password1');
+    const password2 = document.getElementById('password2');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function toggleSubmitButton() {
+        if (password1.value.trim() !== "" && password2.value.trim() !== "") {
+            submitBtn.disabled = false;  // Activar botón
+        } else {
+            submitBtn.disabled = true;   // Desactivar botón
+        }
+    }
+
+    // Escuchar eventos de entrada en ambos campos de contraseña
+    password1.addEventListener('input', toggleSubmitButton);
+    password2.addEventListener('input', toggleSubmitButton);
+});
+
+        let currentTab = 0;
+        showTab(currentTab);
+
+        function showTab(n) {
+    let x = document.getElementsByClassName("step");
+
+    if (x.length === 0) return; // Asegúrate de que haya pasos
+
+    // Ocultar todos los pasos
+    for (let i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+    }
+
+
+    // Mostrar el paso actual
+    x[n].style.display = "block";
+
+    // Deshabilitar botón Registrar en el Step 3 al cargar
+        if (n === 2) { // Aquí se supone que el Step 3 es el índice 2
+            submitBtn.disabled = true;
+        }
+
+    let progress = ((n + 1) / x.length) * 100;
+    document.querySelector(".progress-bar").style.width = progress + "%";
+    document.querySelector(".progress-bar").setAttribute("aria-valuenow", progress);
+
+    // Controlar la visibilidad y el posicionamiento de los botones
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const formFooter = document.querySelector('.form-footer');
+
+
+    // Controlar la visibilidad de los botones
+    if (n === 0) { // Primer paso
+        document.getElementById("prevBtn").style.display = "none";
+        document.getElementById("nextBtn").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
+        formFooter.classList.add("single-button"); // Centrar el botón Next
+    } else if (n === 1) { // Segundo paso
+        document.getElementById("prevBtn").style.display = "block";
+        document.getElementById("nextBtn").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
+    } else if (n === 2) { // Tercer paso
+        document.getElementById("prevBtn").style.display = "block";
+        document.getElementById("nextBtn").style.display = "none";
+        document.getElementById("submitBtn").style.display = "block";
+    } else if (n === 3) { // Cuarto paso
+        document.getElementById("prevBtn").style.display = "none";
+        document.getElementById("nextBtn").style.display = "none";
+        document.getElementById("submitBtn").style.display = "none";
+    }
+}
+
+        function nextPrev(n) {
+    let x = document.getElementsByClassName("step");
+    if (x.length === 0) return; // Asegúrate de que haya pasos
+
+    if (n === 1 && !validateForm()) return false; // Validar formulario actual
+
+    x[currentTab].style.display = "none";
+    currentTab += n;
+
+    if (currentTab >= x.length) {
+        currentTab = x.length - 1;
+        document.getElementById("cedulaForm").submit();
+        return false;
+    }
+
+    showTab(currentTab);
+}
+
+        function validateForm() {
+        document.getElementById("nextBtn").disabled = true;
+            let valid = true;
+            let x = document.getElementsByClassName("step");
+            let y = x[currentTab].getElementsByTagName("input");
+            for (let i = 0; i < y.length; i++) {
+                if (y[i].value == "" && y[i].type !== "checkbox") {
+                    y[i].classList.add("invalid");
+                    valid = false;
+                } else {
+                    y[i].classList.remove("invalid");
+                }
+            }
+            return valid;
+        }
+
+        function checkFormValidity() {
+
+            const dataCorrect = document.getElementById("dataCorrect").checked;
+            const accessEmail = document.getElementById("accessEmail").checked;
+            document.getElementById("nextBtn").disabled = !(dataCorrect && accessEmail);
+
+        }
+
+        function checkFormValiditypassword() {
+
+            const accessPassword = document.getElementById("accessPassword").checked;
+            document.getElementById("nextBtn").disabled = !(accessPassword);
+
+        }
+
+     function verifyCedulaRuc() {
+    document.getElementById("spinner").style.display = "inline-block";
+    document.getElementById("spinner").style.display = "inline-block";
+
+    // Simulación de la verificación de la cédula con AJAX
+    setTimeout(function() {
+        // Ocultar el spinner después de la verificación
+        document.getElementById("spinner").style.display = "none";
+
+        // Continuar con la lógica después de la verificación...
+    }, 3000); // Simula una verificación de 3 segundos
+
+    const cedulaRuc = document.getElementById("cedulaRuc").value;
+    document.getElementById("nextBtn").disabled = true; // Deshabilitar el botón "Siguiente" durante la verificación
+
+    // Mostrar el mensaje de carga
+    document.getElementById('verificationMessage').textContent = 'Cargando, por favor espere...';
+
+    fetch('{% url "verify_cedula_ruc" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: new URLSearchParams({
+            'cedula_ruc': cedulaRuc
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Ocultar el mensaje de carga
+
+        if (data.status === 'success') {
+            document.getElementById("verificationMessage").textContent = data.message;
+            document.getElementById("verificationMessage").className = "text-success";
+            // Poblar los campos del segundo paso con los datos recibidos
+            const clientDetails = `
+                <ul class="list-group list-group-horizontal">
+  <li class="list-group-item"><p><strong>Cédula:</strong></li>
+  <li class="list-group-item">${data.data[0][1]}</li>
+
+</ul>
+<ul class="list-group list-group-horizontal">
+  <li class="list-group-item"><p><strong>Cédula:</strong></li>
+  <li class="list-group-item">${data.data[0][1]}</li>
+
+</ul>
+                <p><strong>Cédula:</strong> ${data.data[0][1]}</p>
+                <p><strong>Nombre Completo:</strong> ${data.data[0][2]}</p>
+                <p><strong>Email:</strong> ${data.data[0][10]}</p>
+            `;
+
+            document.getElementById("username").value = data.data[0][1];
+            document.getElementById("email").value = data.data[0][10];
+
+
+            document.getElementById("clientDetails").innerHTML = clientDetails;
+            document.getElementById("nextBtn").disabled = false; // Habilitar el botón "Siguiente"
+        } else {
+            document.getElementById("verificationMessage").textContent = data.message;
+            document.getElementById("verificationMessage").className = "text-danger";
+            document.getElementById("nextBtn").disabled = true; // Deshabilitar el botón "Siguiente"
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Ocultar el mensaje de carga
+        document.getElementById('loadingMessage').style.display = 'none';
+
+        document.getElementById("verificationMessage").textContent = "Servicio no Disponible";
+        document.getElementById("verificationMessage").className = "text-danger";
+        document.getElementById("nextBtn").disabled = true; // Deshabilitar el botón "Siguiente"
+    });
+}
+
+    function submitFormViaAjax() {
+    let form = document.getElementById("cedulaForm");
+    let formData = new FormData(form);
+
+    fetch("{% url 'registro_usuario_ajax' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showToast("Usuario registrado exitosamente.", 'success');
+            document.getElementById("step3Message").textContent = "Usuario registrado exitosamente.";
+            document.getElementById("step3Message").className = "text-success";
+            // Redirigir o hacer otra cosa después del éxito
+            showTab(3); // Cambiar al paso 4
+        } else {
+            // Procesar y mostrar errores
+            let errorMessages = '';
+            data.errors.forEach(error => {
+                errorMessages += `<p><strong>${error.field}:</strong> ${error.message}</p>`;
+            });
+            showToast(errorMessages, 'errorMessages');
+            document.getElementById("step3Message").innerHTML = errorMessages;
+            document.getElementById("step3Message").className = "text-danger";
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById("step3Message").textContent = "Error en el registro. Inténtalo de nuevo.";
+        document.getElementById("step3Message").className = "text-danger";
+    })
+    .finally(() => {
+        document.getElementById("nextBtn").disabled = false; // Habilitar el botón después de la solicitud
+    });
+}
+
+
+
+    </script>
+
+</body>
+</html>
+
+
+
+
