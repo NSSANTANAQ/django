@@ -6,7 +6,9 @@ from django.contrib.auth import authenticate
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=150)
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'})
+    )
 
     def clean(self):
         cleaned_data = super().clean()
