@@ -95,8 +95,8 @@ DATABASES = {
     'railway': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Ejemplo con PostgreSQL
         'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'TzOSnbbVhSPuqzcHtDeDQxeFPtfuDCie',
+        'USER': 'sisapp',
+        'PASSWORD': 'Epmapas2024*',
         # 'HOST': 'junction.proxy.rlwy.net',
         # 'PORT': '29129',
         'HOST': "postgres.railway.internal",
