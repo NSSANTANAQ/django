@@ -8,47 +8,49 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-        /* CSS personalizado para centrar todo el contenido */
-        .toast-container {
-            delay: 5000;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1050;
-        }
-        .main-container {
-            height: 100vh; /* Hace que el contenedor tenga el 100% de la altura de la ventana */
-            display: flex;
-            justify-content: center; /* Centra verticalmente */
-            align-items: center; /* Centra horizontalmente */
-            text-align: center;
-            background-color: #f8f9fa; /* Fondo del contenedor principal */
-        }
-        .login-section {
-            width: 100%;
-            max-width: 450px; /* Ancho máximo del contenedor de la imagen y formulario */
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #fff; /* Color de fondo del contenedor */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra del contenedor principal */
-        }
-        .login-section img {
-            max-width: 100%; /* Asegura que la imagen no exceda el ancho del contenedor */
-            height: auto; /* Mantiene la proporción de la imagen */
-        }
-        .login-form {
-            margin-top: 20px;
-            max-width: 100%; /* Asegura que el formulario no exceda el ancho del contenedor */
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #f9f9f9; /* Color de fondo del formulario */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera para el formulario */
-        }
-        .btn-custom {
-            width: 100%; /* Botón ocupa todo el ancho del formulario */
-        }
-    </style>
+    /* CSS personalizado para centrar todo el contenido */
+    .toast-container {
+        delay: 5000;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+    }
+    .main-container {
+        min-height: 100vh; /* Hace que el contenedor tenga un mínimo de 100% de la altura de la ventana */
+        display: flex;
+        justify-content: center; /* Centra horizontalmente */
+        align-items: center; /* Centra verticalmente */
+        text-align: center;
+        background-color: #f8f9fa; /* Fondo del contenedor principal */
+        padding: 20px; /* Añade algo de espacio en los lados para pantallas pequeñas */
+    }
+    .login-section {
+        width: 100%;
+        max-width: 95%; /* Ancho máximo relativo al tamaño de la pantalla */
+        padding: 20px;
+        margin: 20px 0; /* Añade margen superior e inferior */
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #fff; /* Color de fondo del contenedor */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra del contenedor principal */
+    }
+    .login-section img {
+        max-width: 100%; /* Asegura que la imagen no exceda el ancho del contenedor */
+        height: auto; /* Mantiene la proporción de la imagen */
+    }
+    .login-form {
+        margin-top: 20px;
+        max-width: 100%; /* Asegura que el formulario no exceda el ancho del contenedor */
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #f9f9f9; /* Color de fondo del formulario */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera para el formulario */
+    }
+    .btn-custom {
+        width: 100%; /* Botón ocupa todo el ancho del formulario */
+    }
+</style>
 </head>
 <body>
 
