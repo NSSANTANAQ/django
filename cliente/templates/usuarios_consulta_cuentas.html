@@ -43,9 +43,8 @@
         <table class="table">
             <tr class="table-light">
                 <th>Cuenta</th>
-                <th>Zona</th>
                 <th>Dirección</th>
-                <th>Observaciones</th>
+                <th>Lugar</th>
                 <th>Acciónes</th>
 
                 <!-- Agrega otros campos según tu modelo -->
@@ -54,13 +53,14 @@
             {% for cuenta in cuentas %}
             <tr>
                 <td>{{ cuenta.0 }}</td>
-                <td>{{ cuenta.1 }}-{{ cuenta.2 }}-{{ cuenta.3 }}-{{ cuenta.4 }}-{{ cuenta.5 }}</td>
                 <td>{{ cuenta.6 }}</td>
-                <td>{{ cuenta.8 }}</td>
+                {% if cuenta.8 == 2 %}
+                <td>Samborondón</td>
                 <td>
                     <a href="{% url 'usuarios_consulta_cuentas_detalle' cuenta.0 %}" type="submit"
                        class="btn btn-success"
-                       style=" padding: 5px"><i class="fa fa-share-square" aria-hidden="true"></i> Detalle
+                       style=" padding: 5px"><i class="fa fa-share-square" aria-hidden="true"></i>
+                        <span class="btn-text">Detalle</span>
                         </a>
                 </td><!-- Agrega otros campos según tu modelo -->
             </tr>
@@ -78,4 +78,15 @@
 <script>
     window.history.pushState({}, document.title, "/");
 </script>
+
+<style>
+
+    /* Oculta el texto 'Detalle' en pantallas pequeñas */
+@media (max-width: 576px) {
+    .btn-text {
+        display: none;
+    }
+}
+</style>
+
 {% endblock %}
