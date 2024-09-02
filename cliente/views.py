@@ -85,13 +85,15 @@ def usuarios_consulta_cuentas_detalle(request, cuenta_id):
         # Consulta para obtener la cuenta
         cursor.execute(
             'SELECT * FROM financiero.ren_liquidacion WHERE cuenta = %s AND tipo_liquidacion = 1 AND estado_liquidacion = 2 ORDER BY id DESC LIMIT 1',
-            [cedula_ruc]
+            [cuenta_id]
         )
         cuentas_result = cursor.fetchall()
+        datos_cuenta = cuentas_result[0]
+        mes = datos_cuenta[2]
 
         cursor.execute(
             'SELECT * FROM financiero.ren_mes_facturacion WHERE id = %s',
-            cuentas_result[3]
+            [mes]
         )
         mes_facturacion_result = cursor.fetchall()
 
@@ -103,6 +105,7 @@ def usuarios_consulta_cuentas_detalle(request, cuenta_id):
         convenio_result = cursor.fetchone()
 
     if cuentas_result:
+        mes_facturacion = mes_facturacion_result[0]
         cuenta = cuentas_result[0]
         subtotal1 = cuenta[12]  # Campo 12 de la cuenta
         total_pagar = cuenta[4]  # Campo 4 de la cuenta
@@ -110,8 +113,9 @@ def usuarios_consulta_cuentas_detalle(request, cuenta_id):
         subtotal =  subtotal1 + interes
         total = subtotal + total_pagar
 
+
         context = {
-            'mes_facturacion':mes_facturacion_result,
+            'mes_facturacion': mes_facturacion,  # Agrega los convenios al contexto
             'convenios': convenio_result,  # Agrega los convenios al contexto
             'cliente': cliente_data,
             'cuentas': cuentas_result,

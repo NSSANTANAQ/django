@@ -35,13 +35,16 @@
         <h5 class="card-title">
             Detalle de la Cuenta: Total a Pagar (A)+(B): {{ total }} - Mas Convenio.
         </h5>
-        <h6 class="card-subtitle text-muted">
-            Facturas Vencidas
-        </h6>
 
     </div>
     <div class="table-responsive">
+        <div class="card-header">
+            <h6 class="card-subtitle text-muted">
+                    Facturas Vencidas
+                </h6>
+    </div>
     <div class="card-body">
+
        <table class="table">
             <tr class="table-light">
                 <th>Cuenta</th>
@@ -75,11 +78,9 @@
     </div>
 <!-- card 2 -->
         <div class="card-header">
-
             <h6 class="card-subtitle text-muted">
                     Mensual
                 </h6>
-
     </div>
 
     <div class="card-body">
@@ -95,7 +96,7 @@
             {% for cuenta in cuentas %}
                 <tr>
                     <td>{{ cuenta.8 }}</td>
-                    <td>{{ cuenta.5|date:"F" }}</td>
+                    <td>{{ mes_facturacion.5|date:"F" }}</td>
                     <td>{{ cuenta.4 }}</td>
 
                 </tr>
@@ -128,7 +129,7 @@
                  {% if convenios %}
                 <tr>
                     <td>{{ convenios.0}}</td>
-                    <td>{{ mes_facturacion.5|date:"F"}}</td>
+                    <td>{{ convenios.3|date:"F" }}</td>
                     {% if convenios.9 == 2 %}
                     <td>Por Pagar</td>
                     {% endif %}
