@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from .models import AdCliente, AdCuenta
 from django.db import connections
-# Create your views here.
+from django.contrib.auth.decorators import login_required
 
 
+@login_required(login_url='login')
 def menu_usuarios(request):
-
     return render(request, 'menu_usuarios.html')
+@login_required(login_url='login')
 def usuarios_consulta_cuentas(request):
     cedula_ruc = request.user.username  # Asumiendo que cedula_ruc está en el nombre de usuario
 
@@ -52,7 +53,7 @@ def usuarios_consulta_cuentas(request):
 
     return render(request, 'usuarios_consulta_cuentas.html', context)
 
-
+@login_required(login_url='login')
 def usuarios_consulta_cuentas_detalle(request, cuenta_id):
     cedula_ruc = request.user.username  # Asumiendo que cedula_ruc está en el nombre de usuario
 

@@ -118,6 +118,9 @@ CSRF_TRUSTED_ORIGINS = [
     'https://django-server-production-b121.up.railway.app',
 ]
 
+# Si se establece en True, la sesión se eliminará cuando el usuario cierre el navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]

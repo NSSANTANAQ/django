@@ -9,8 +9,6 @@
     {% load static %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link href='https://unpkg.com/boxicons@2.1.4/dist/boxicons.js' rel='stylesheet'>
     <link rel="shortcut icon" type="img/png" href="{% static 'images/favicon.png' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css">
@@ -30,9 +28,8 @@
                         Menu
                     </li>
                     <li class="sidebar-item">
-                        <a href="{% url 'usuarios_consulta_cuentas' %}" class="sidebar-link">
-                            <i class='bx bxs-collection'></i>
-                            Cuentas
+                        <a href="{% url 'usuarios_consulta_cuentas' %}" class="sidebar-link mx-3">
+                            <i class="fa fa-th-list" aria-hidden="true"></i> Cuentas
                         </a>
                     </li>
 <!--                    <li class="sidebar-item">-->
@@ -111,11 +108,16 @@
         </aside>
         <div class="main">
             <nav class="navbar navbar-expand px-3 border-bottom custom-navbar">
+
                 <button class="btn btn-info" id="sidebar-toggle" type="button">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse navbar">
                     <ul class="navbar-nav">
+                         <a href="#" class="theme-toggle mx-3 ">
+                    <i class="fa fa-moon-o" aria-hidden="true"></i>
+                    <i class="fa fa-sun-o" aria-hidden="true"></i>
+                </a>
                         <li class="nav-item dropdown">
                             <a href="#" data-bs-toggle="dropdown" class="nav-icon pe-md-0">
                                 <img src="{% static 'images/usuario.png' %}" class="avatar img-fluid rounded" alt="">
@@ -198,7 +200,7 @@
                                 <img src="{% static 'images/info/actualizacion.jpg' %}" class="d-block w-100" alt="Actualización de Datos">
                             </div>
                             <div class="carousel-item">
-                                <img src="{% static 'images/info/comunicate1.jpg' %}" class="d-block w-100" alt="Denuncia">
+                                <img src="{% static 'images/info/gotita.jpg' %}" class="d-block w-100" alt="Gotita">
                             </div>
                             <div class="carousel-item">
                                 <img src="{% static 'images/info/denuncia.jpg' %}" class="d-block w-100" alt="Denuncia">
@@ -221,10 +223,10 @@
                     {% endblock %}
                 </div>
             </main>
-            <a href="#" class="theme-toggle">
-                <i class='bx bxs-moon' ></i>
-                <i class='bx bxs-sun'></i>
-            </a>
+<!--            <a href="#" class="theme-toggle">-->
+<!--                <i class='bx bxs-moon' ></i>-->
+<!--                <i class='bx bxs-sun'></i>-->
+<!--            </a>-->
             <footer class="footer">
                 <div class="container-fluid">
                     <div class="row text-muted">
@@ -408,6 +410,7 @@ h4 {
 
 /* Sidebar Elements Style */
 .sidebar-logo {
+    text-align: center;
     padding: 1.15rem;
 }
 
@@ -521,20 +524,14 @@ a.sidebar-link {
 /* Theme Toggler */
 
 .theme-toggle {
-    border-radius: 10px;
-    position: fixed;
-    top: 5%;
-    transform: translateY(-65%);
     text-align: center;
-    z-index: 0;
-    right: 10%;
-    left: auto;
-    border: none;
-    background-color: var(--bs-body-color);
+    width: 40px;
+    border-radius: 10px;
+    background-color: black;
 }
 
-html[data-bs-theme="dark"] .theme-toggle .bxs-sun,
-html[data-bs-theme="light"] .theme-toggle .bxs-moon {
+html[data-bs-theme="dark"] .theme-toggle .fa-sun-o,
+html[data-bs-theme="light"] .theme-toggle .fa-moon-o {
     cursor: pointer;
     padding: 10px;
     display: block;
@@ -542,12 +539,16 @@ html[data-bs-theme="light"] .theme-toggle .bxs-moon {
     color: #FFF;
 }
 
-html[data-bs-theme="dark"] .theme-toggle .bxs-moon {
+html[data-bs-theme="dark"] .theme-toggle .fa-moon-o {
     display: none;
 }
 
-html[data-bs-theme="light"] .theme-toggle .bxs-sun {
+html[data-bs-theme="light"] .theme-toggle .fa-sun-o {
     display: none;
 }
 </style>
+
+<script>
+    window.history.pushState({}, document.title, "/");
+</script>
 </html>
