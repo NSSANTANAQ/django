@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cerro Sesión</title>
     {% load static %}
     <link rel="shortcut icon" type="img/png" href="{% static 'images/favicon.png' %}">
@@ -49,6 +50,16 @@
         .btn-custom {
             width: 100%; /* Botón ocupa todo el ancho del formulario */
         }
+         /* Media Query para pantallas de móviles */
+    @media (max-width: 768px) {
+        .login-section {
+            transform: scale(1.1); /* Aumenta el tamaño del contenido (20% más grande) */
+            max-width: 80%; /* El contenedor toma todo el ancho disponible */
+        }
+        .main-container {
+            padding: 5; /* Elimina el padding para aprovechar el espacio */
+        }
+    }
     </style>
 </head>
 <body>
