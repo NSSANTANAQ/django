@@ -1,87 +1,87 @@
-<!--<!DOCTYPE html>-->
-<!--<html>-->
-<!--<head>-->
-<!--    <title>Cerro Sesión</title>-->
-<!--    {% load static %}-->
-<!--    <link rel="shortcut icon" type="img/png" href="{% static 'images/favicon.png' %}">-->
-<!--    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">-->
-<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">-->
-<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
-<!--    <style>-->
-<!--        /* CSS personalizado para centrar todo el contenido */-->
-<!--        .toast-container {-->
-<!--            delay: 5000;-->
-<!--            position: fixed;-->
-<!--            top: 20px;-->
-<!--            right: 20px;-->
-<!--            z-index: 1050;-->
-<!--        }-->
-<!--        .main-container {-->
-<!--            height: 100vh; /* Hace que el contenedor tenga el 100% de la altura de la ventana */-->
-<!--            display: flex;-->
-<!--            flex-direction: column;-->
-<!--            justify-content: center; /* Centra verticalmente */-->
-<!--            align-items: center; /* Centra horizontalmente */-->
-<!--            text-align: center;-->
-<!--            background-color: #f8f9fa; /* Fondo del contenedor principal */-->
-<!--        }-->
-<!--        .login-section {-->
-<!--            width: 100%;-->
-<!--            max-width: 450px; /* Ancho máximo del contenedor de la imagen y formulario */-->
-<!--            padding: 20px;-->
-<!--            border: 1px solid #ccc;-->
-<!--            border-radius: 10px;-->
-<!--            background-color: #fff; /* Color de fondo del contenedor */-->
-<!--            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra del contenedor principal */-->
-<!--        }-->
-<!--        .login-section img {-->
-<!--            max-width: 100%; /* Asegura que la imagen no exceda el ancho del contenedor */-->
-<!--            height: auto; /* Mantiene la proporción de la imagen */-->
-<!--        }-->
-<!--        .login-form {-->
-<!--            margin-top: 20px;-->
-<!--            max-width: 100%; /* Asegura que el formulario no exceda el ancho del contenedor */-->
-<!--            padding: 15px;-->
-<!--            border-radius: 8px;-->
-<!--            background-color: #f9f9f9; /* Color de fondo del formulario */-->
-<!--            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera para el formulario */-->
-<!--        }-->
-<!--        .btn-custom {-->
-<!--            width: 100%; /* Botón ocupa todo el ancho del formulario */-->
-<!--        }-->
-<!--    </style>-->
-<!--</head>-->
-<!--<body>-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cerro Sesión</title>
+    {% load static %}
+    <link rel="shortcut icon" type="img/png" href="{% static 'images/favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        /* CSS personalizado para centrar todo el contenido */
+        .toast-container {
+            delay: 5000;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+        .main-container {
+            height: 100vh; /* Hace que el contenedor tenga el 100% de la altura de la ventana */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centra verticalmente */
+            align-items: center; /* Centra horizontalmente */
+            text-align: center;
+            background-color: #f8f9fa; /* Fondo del contenedor principal */
+        }
+        .login-section {
+            width: 100%;
+            max-width: 450px; /* Ancho máximo del contenedor de la imagen y formulario */
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff; /* Color de fondo del contenedor */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra del contenedor principal */
+        }
+        .login-section img {
+            max-width: 100%; /* Asegura que la imagen no exceda el ancho del contenedor */
+            height: auto; /* Mantiene la proporción de la imagen */
+        }
+        .login-form {
+            margin-top: 20px;
+            max-width: 100%; /* Asegura que el formulario no exceda el ancho del contenedor */
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9; /* Color de fondo del formulario */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera para el formulario */
+        }
+        .btn-custom {
+            width: 100%; /* Botón ocupa todo el ancho del formulario */
+        }
+    </style>
+</head>
+<body>
 
-<!--<div class="main-container">-->
-<!--    <div class="login-section">-->
-<!--        <img src="{% static 'images/LOGOEPMAPAS.png' %}" class="rounded mx-auto d-block" width="200" height="200" alt="">-->
-<!--        <div class="login-form">-->
-<!--            <img src="{% static 'images/gotita1.png' %}" class="rounded mx-auto d-block" width="200" height="200" alt="">-->
-<!--            <p>¡Vuelve pronto!</p>-->
-<!--            <a type="submit" href="{% url 'login' %}" class="btn btn-success btn-custom"> Volver</a>-->
-<!--        </div>-->
-<!--        <div class="text-center mt-3">-->
-<!--            <p>¡Visita nuestras Redes Sociales para estar Informado!</p>-->
-<!--            <button type="button" class="btn btn-outline-primary btn-sm mx-2">-->
-<!--                <i class="fa fa-facebook-official" aria-hidden="true"></i>-->
-<!--            </button>-->
-<!--            <button type="button" class="btn btn-outline-primary btn-sm mx-2">-->
-<!--                <i class="fa fa-twitter" aria-hidden="true"></i>-->
-<!--            </button>-->
-<!--            <button type="button" class="btn btn-outline-primary btn-sm mx-2">-->
-<!--                <i class="fa fa-youtube-play" aria-hidden="true"></i>-->
-<!--            </button>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
+<div class="main-container">
+    <div class="login-section">
+        <img src="{% static 'images/LOGOEPMAPAS.png' %}" class="rounded mx-auto d-block" width="200" height="200" alt="">
+        <div class="login-form">
+            <img src="{% static 'images/gotita1.png' %}" class="rounded mx-auto d-block" width="200" height="200" alt="">
+            <p>¡Vuelve pronto!</p>
+            <a type="submit" href="{% url 'login' %}" class="btn btn-success btn-custom"> Volver</a>
+        </div>
+        <div class="text-center mt-3">
+            <p>¡Visita nuestras Redes Sociales para estar Informado!</p>
+            <button type="button" class="btn btn-outline-primary btn-sm mx-2">
+                <i class="fa fa-facebook-official" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary btn-sm mx-2">
+                <i class="fa fa-twitter" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary btn-sm mx-2">
+                <i class="fa fa-youtube-play" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+</div>
 
-<!--&lt;!&ndash; Optional JavaScript &ndash;&gt;-->
-<!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
-<!--<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>-->
-<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
-<!--<script>-->
+<!-- Optional JavaScript -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
 
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->
+</script>
+</body>
+</html>
