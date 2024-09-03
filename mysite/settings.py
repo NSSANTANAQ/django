@@ -87,8 +87,8 @@ DATABASES = {
         'NAME': "railway",
         'USER': "postgres",
         'PASSWORD': "XWNyYyJwiuHcXmaHxkbAozJjHZKNqTeT",
-        'HOST': "autorack.proxy.rlwy.net",
-        'PORT': "15788",
+        # 'HOST': "autorack.proxy.rlwy.net",
+        # 'PORT': "15788",
         'HOST': "postgres.railway.internal",
         'PORT': "5432",
     },
@@ -114,6 +114,7 @@ LOGIN_REDIRECT_URL = '/cliente/menu_usuarios/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 CSRF_TRUSTED_ORIGINS = [
+
     'https://serviciosenlinea.epmapas.gob.ec',
     'https://django-server-production-b121.up.railway.app',
 ]

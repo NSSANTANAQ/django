@@ -13,7 +13,7 @@
     </div>
     <div class="card-body">
         <table class="table">
-            <tr class="table-light">
+            <tr class="table-secondary">
                 <th>Cédula RUC</th>
                 <th>Nombre</th>
                 <th>Dirección</th> <!-- Puedes agregar otros campos según tu modelo -->
@@ -32,26 +32,26 @@
 <div class="card border-0">
 
     <div class="card-header">
-        <h5 class="card-title">
-            Detalle de la Cuenta: Total a Pagar (A)+(B): {{ total }} - Mas Convenio.
+        <h5 class="card-title" style="display: flex; justify-content: space-between;">
+            <span>Detalle de la Cuenta:  </span>  <strong>Total a Pagar (A)+(B): {{ total }}</strong>
         </h5>
 
     </div>
     <div class="table-responsive">
-        <div class="card-header">
-            <h6 class="card-subtitle text-muted">
+        <div class="card-header text-bg-secondary">
+            <h6 class="card-subtitle">
                     Facturas Vencidas
                 </h6>
     </div>
     <div class="card-body">
 
        <table class="table">
-            <tr class="table-light">
+            <tr class="table-secondary">
                 <th>Cuenta</th>
-                <th> Facturas Vencidas</th>
+                <th>Vencidas</th>
                 <th>Adeudao</th>
-                <th>interes</th>
-                <th>Total Adeudado (A)</th>
+                <th>Interes</th>
+                <th>Valor (A)</th>
 
                 <!-- Agrega otros campos según tu modelo -->
             </tr>
@@ -77,15 +77,15 @@
         </table>
     </div>
 <!-- card 2 -->
-        <div class="card-header">
-            <h6 class="card-subtitle text-muted">
+        <div class="card-header text-bg-secondary">
+            <h6 class="card-subtitle">
                     Mensual
                 </h6>
     </div>
 
     <div class="card-body">
        <table class="table">
-            <tr class="table-light">
+            <tr class="table-secondary">
                 <th>Cuenta</th>
                 <th>Mes</th>
                 <th>valor (B)</th>
@@ -111,16 +111,16 @@
         </table>
     </div>
 
-        <div class="card-header">
-            <h6 class="card-subtitle text-muted">
+        <div class="card-header text-bg-secondary">
+            <h6 class="card-subtitle">
                     Convenios
             </h6>
     </div>
     <div class="card-body">
        <table class="table">
-            <tr class="table-light">
+            <tr class="table-secondary" >
                 <th>Solicitud</th>
-                <th>Fecha de Inicio</th>
+                <th>Inicio</th>
                 <th>Estado</th>
 
                 <!-- Agrega otros campos según tu modelo -->
@@ -156,6 +156,7 @@
   max-height: 240px; /* Establece la altura máxima de la tabla */
   overflow-y: auto;
 }
+
 
 /* Fija los encabezados de la tabla */
 .table thead th {

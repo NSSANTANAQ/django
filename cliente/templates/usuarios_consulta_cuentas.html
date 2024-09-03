@@ -13,7 +13,7 @@
     </div>
     <div class="card-body">
         <table class="table">
-            <tr class="table-light">
+            <tr class="table-secondary">
                 <th>Cédula RUC</th>
                 <th>Nombre</th>
                 <th>Dirección</th> <!-- Puedes agregar otros campos según tu modelo -->
@@ -41,7 +41,7 @@
     </div>
     <div class="card-body">
         <table class="table">
-            <tr class="table-light">
+            <tr class="table-secondary">
                 <th>Cuenta</th>
                 <th>Dirección</th>
                 <th>Lugar</th>
@@ -60,7 +60,7 @@
                 <td>
                     <a href="{% url 'usuarios_consulta_cuentas_detalle' cuenta.0 %}" type="submit"
                        class="btn btn-success"
-                       style=" padding: 5px"><i class="fa fa-share-square" aria-hidden="true"></i>
+                       style=" padding: 5px" onclick="showLoadingModal()"><i class="fa fa-share-square" aria-hidden="true"></i>
                         <span class="btn-text">Detalle</span>
                         </a>
                 </td><!-- Agrega otros campos según tu modelo -->

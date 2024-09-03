@@ -37,11 +37,10 @@ def usuarios_consulta_cuentas(request):
     # Si el cliente fue encontrado, se procede a buscar las cuentas
     if cliente_data:
         with connections['railway'].cursor() as cursor:
-            print(cliente_data['cliente_id'])
             # Consulta para obtener las cuentas relacionadas con el cliente
             cursor.execute('SELECT * FROM administracion.ad_cuenta WHERE cliente = %s AND estado = 24', [cliente_data['cliente_id']])
             cuentas_result = cursor.fetchall()
-            print(cuentas_result)
+
     else:
         cuentas_result = []
 
@@ -103,6 +102,8 @@ def usuarios_consulta_cuentas_detalle(request, cuenta_id):
             [cuenta_id]
         )
         convenio_result = cursor.fetchone()
+
+
 
     if cuentas_result:
         mes_facturacion = mes_facturacion_result[0]
