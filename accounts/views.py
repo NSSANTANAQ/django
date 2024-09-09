@@ -34,7 +34,7 @@ def login_view(request):
 
             # Verificamos si el usuario está activo
             if not user.is_active:
-                messages.error(request, 'Tu cuenta está desactivada.')
+
                 return redirect('activar_cuenta_modal',  user.pk)
 
             # Si el usuario está activo, procedemos con la validación del formulario
@@ -207,22 +207,6 @@ def send_activation_email(user):
             }
         )
 
-        # try:
-        #     send_mail(
-        #         'Código de activación de cuenta',
-        #         f'Tu código de activación es: {activation_code}, Inicia Sesión con tu usuario y contraseña para activarlo',
-        #         settings.EMAIL_HOST_USER,
-        #         [user.email],
-        #
-        #     )
-        #     return HttpResponse('Correo de prueba enviado con éxito.')
-        # except socket.error as e:
-        #     return HttpResponse(f'Error de conexión: {str(e)}')
-        # except ImproperlyConfigured as e:
-        #     return HttpResponse(f'Configuración incorrecta: {str(e)}')
-        # except Exception as e:
-        #     return HttpResponse(f'Error al enviar el correo: {str(e)}')
-        # Intentar enviar el código por correo electrónico
         try:
             send_mail(
                 'Código de activación de cuenta',
@@ -302,19 +286,3 @@ def activar_cuenta_modal(request, pk):
 
     return render(request, 'activar_cuenta_modal.html')
 
-def send_test_email(request):
-    try:
-        send_mail(
-            'Asunto de prueba',
-            'Este es el cuerpo del correo electrónico de prueba.',
-            settings.EMAIL_HOST_USER,
-            ['nestor.santana@epmapas.gob.ec']
-
-        )
-        return HttpResponse('Correo de prueba enviado con éxito.')
-    except socket.error as e:
-        return HttpResponse(f'Error de conexión: {str(e)}')
-    except ImproperlyConfigured as e:
-        return HttpResponse(f'Configuración incorrecta: {str(e)}')
-    except Exception as e:
-        return HttpResponse(f'Error al enviar el correo: {str(e)}')
