@@ -13,6 +13,7 @@ urlpatterns = [
 
     path('activar_cuenta_modal/<int:pk>/', views.activar_cuenta_modal, name='activar_cuenta_modal'),
 
+    path('cuenta_activada_exito/', views.cuenta_activada_exito, name='cuenta_activada_exito'),
 
     path('logout/', views.custom_logout, name='logout'),
 ]

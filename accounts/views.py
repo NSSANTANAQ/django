@@ -279,10 +279,13 @@ def activar_cuenta_modal(request, pk):
                 activation_code.delete()
 
                 # Redirigir a la página principal
-                return redirect('login')
+                return redirect('cuenta_activada_exito')
 
         except ActivationCode.DoesNotExist:
             messages.error(request, 'Código inválido.')
 
     return render(request, 'activar_cuenta_modal.html')
 
+def cuenta_activada_exito(request):
+
+    return render(request, 'cuenta_activada_exito.html')
