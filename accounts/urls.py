@@ -11,5 +11,9 @@ urlpatterns = [
     path('verificar_conexion_bd/', views.verificar_conexion_bd, name='verificar_conexion_bd'),
     path('registro_usuario_ajax/', views.registro_usuario_ajax, name='registro_usuario_ajax'),
 
+    path('activar_cuenta_modal/<int:pk>/', views.activar_cuenta_modal, name='activar_cuenta_modal'),
+
+    path('send_test_email/', views.send_test_email, name='send_test_email'),
+
     path('logout/', views.custom_logout, name='logout'),
 ]

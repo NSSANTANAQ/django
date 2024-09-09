@@ -5,6 +5,8 @@ from django.contrib.auth import authenticate
 from cliente.models import AdCliente
 from django.core.exceptions import ValidationError
 import re
+
+
 class LoginForm(forms.Form):
     username = forms.CharField(
         max_length=150,
@@ -31,6 +33,9 @@ class LoginForm(forms.Form):
             user = authenticate(username=username, password=password)
             if not user:
                 raise forms.ValidationError("Usuario o contraseña incorrectos.")
+            elif not user.is_active:
+                raise forms.ValidationError("Esta cuenta está desactivada.")
+
         return cleaned_data
 
 

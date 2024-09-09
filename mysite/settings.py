@@ -184,3 +184,11 @@ MESSAGE_TAGS = {
     messages.WARNING: 'warning',
     messages.ERROR: 'danger',
 }
+
+# Correo electronico
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.epmapas.gob.ec'  # Tu servidor SMTP
+EMAIL_PORT = 587  # Puerto de tu servidor SMTP
+EMAIL_USE_TLS = True  # Usar TLS para el correo electrónico
+EMAIL_HOST_USER = 'serviciosenlinea@epmapas.gob.ec'  # Tu dirección de correo
+EMAIL_HOST_PASSWORD = 'EPMAPAS2024****'  # Contraseña de tu correo

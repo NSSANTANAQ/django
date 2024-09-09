@@ -1,0 +1,54 @@
+{% extends "menu_usuarios.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card border-0">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        PERFIL:
+                    </h5>
+                    <h6 class="card-subtitle text-muted">
+                        Gestionar Perfil.
+                    </h6>
+                </div>
+                <div class="card-body">
+    <div class="container">
+        <div class="row">
+            <div class="col-6 col-sm-3 p-3"><strong>Cedula:</strong></div>
+            <div class="col-sm-9 p-3">{{ cliente.cedula }}</div>
+
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+
+            <div class="col-6 col-sm-3 p-3"><strong>Cliente:</strong></div>
+            <div class="col-sm-9 p-3">{{ cliente.nombre }}</div>
+
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+
+            <div class="col-6 col-sm-3 p-3"><strong>Correo:</strong></div>
+            <div class="col-sm-9 p-3">{{ cliente.correo }}</div>
+
+            <div class="w-100"></div>
+            {% if cliente.celular == '' %}
+                <div class="col-6 col-sm-3 p-3"><strong>Celular:</strong></div>
+                <div class="col-sm-9 p-3">Actualice sus Datos!</div>
+            {% else %}
+                <div class="col-6 col-sm-3 p-3"><strong>Celular:</strong></div>
+                <div class="col-sm-9 p-3">{{ cliente.celular }}</div>
+
+            {% endif %}
+
+            <img src="{% static 'images/info/informa_actualizacion.jpg' %}" alt="Actualización" style="box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.3);">
+
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

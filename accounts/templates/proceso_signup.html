@@ -332,7 +332,7 @@
                 <div class="step step4" id="successStep" style="display: none;">
                     <p class="text-center mb-4">Paso 4: Usuario Creado con exito</p>
                     <p class="text-center mb-4">¡Felicidades!</p>
-                    <p class="text-center mb-4">Has creado el usuario exitosamente.</p>
+                    <p class="text-center mb-4">Has creado el usuario exitosamente, Hemos enviado un código de activación a tu cuenta al Correo Electronico registrado, Inicia Seseión con tu usuario y contraseña para activarlo</p>
                     <div class="text-center">
                         <a type="button" id="" href="{% url 'login' %}" class="btn btn-outline-secondary">Iniciar
                             Sesión</a>
@@ -370,9 +370,60 @@
     </div>
 </div>
 
+<!-- Modal de Carga -->
+<div id="loadingModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="loader"></div>
+    <strong>Registrando</strong>
+      <strong style="font-size:12px">Por favor espere..</strong>
+  </div>
+   <!-- Estilos para el Loader -->
+<style>
+  .modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+  }
+
+  .modal-content {
+    max-width: 150px; /* Limita el ancho del modal */
+    width: 80%; /* Para que se adapte a pantallas pequeñas */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 60px;
+    height: 60px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    function showLoadingModal() {
+  document.getElementById('loadingModal').style.display = 'flex';
+}
     // Función para mostrar el toast
 function showToast(message, type = 'success') {
  var toastBody = document.getElementById('toastMessage');
@@ -597,6 +648,9 @@ function showToast(message, type = 'success') {
 }
 
  function submitFormViaAjax() {
+
+  document.getElementById('loadingModal').style.display = 'flex';
+
  let form = document.getElementById("cedulaForm");
  let formData = new FormData(form);
 
@@ -610,6 +664,7 @@ function showToast(message, type = 'success') {
  .then(response => response.json())
  .then(data => {
      if (data.status === 'success') {
+         document.getElementById('loadingModal').style.display = 'none';
          showToast("Usuario registrado exitosamente.", 'success');
          document.getElementById("step3Message").textContent = "Usuario registrado exitosamente.";
          document.getElementById("step3Message").className = "text-success";
@@ -617,6 +672,7 @@ function showToast(message, type = 'success') {
          showTab(3); // Cambiar al paso 4
      } else {
          // Procesar y mostrar errores
+         document.getElementById('loadingModal').style.display = 'none';
          let errorMessages = '';
          data.errors.forEach(error => {
              errorMessages += `<p><strong>${error.field}:</strong> ${error.message}</p>`;
