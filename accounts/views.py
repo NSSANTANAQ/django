@@ -210,7 +210,8 @@ def send_activation_email(user):
         try:
             send_mail(
                 'Código de activación de cuenta',
-                f'Tu código de activación es: {activation_code}, Inicia Sesión con tu usuario y contraseña para activarlo',
+                f'Estimado Usuario Tu código de activación es: {activation_code}, Inicia Sesión con tu usuario y contraseña para activarlo,'
+                f'Si tienes Problemas de Activación comunicate al siguiente correo electrónico, serviciosenlinea@epmapas.gob.ec o al numero 0996884553',
                 settings.EMAIL_HOST_USER,
                 [user.email],
 

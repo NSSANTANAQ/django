@@ -1,3 +1,4 @@
+from decimal import Decimal, ROUND_UP
 from django.shortcuts import render
 from .models import AdCliente, AdCuenta
 from django.db import connections
@@ -118,10 +119,30 @@ def usuarios_consulta_cuentas_detalle(request, cuenta_id):
 
     with connections['railway'].cursor() as cursor:
         # Consulta para obtener la cuenta
+
+        cursor.execute(
+            '''
+            SELECT COUNT(*), SUM(saldo) 
+            FROM financiero.ren_liquidacion 
+            WHERE cuenta = %s AND tipo_liquidacion = 1 AND estado_liquidacion = 2 
+            AND id != (
+                SELECT MAX(id) 
+                FROM financiero.ren_liquidacion 
+                WHERE cuenta = %s AND tipo_liquidacion = 1 AND estado_liquidacion = 2
+            )
+            ''',
+            [cuenta_id, cuenta_id]
+        )
+        result = cursor.fetchone()
+
+        cuenta_total = result[0] + 1  # COUNT(*)
+        saldo_total = result[1]  # SUM(saldo)
+
         cursor.execute(
             'SELECT * FROM financiero.ren_liquidacion WHERE cuenta = %s AND tipo_liquidacion = 1 AND estado_liquidacion = 2 ORDER BY id DESC LIMIT 1',
             [cuenta_id]
         )
+
         cuentas_result = cursor.fetchall()
         datos_cuenta = cuentas_result[0]
         mes = datos_cuenta[2]
@@ -141,14 +162,17 @@ def usuarios_consulta_cuentas_detalle(request, cuenta_id):
 
 
     if cuentas_result:
+
         mes_facturacion = mes_facturacion_result[0]
         cuenta = cuentas_result[0]
-        subtotal1 = cuenta[12]  # Campo 12 de la cuenta
-        total_pagar = cuenta[4]  # Campo 4 de la cuenta
-        interes = cuenta[13]  # Campo 13 de la cuenta
-        subtotal =  subtotal1 + interes
+        total_pagar = cuenta[4]
+        cuenta_total_int = int(cuenta_total)# Campo 4 de la cuenta
+        print(cuenta_total)
+        interes_num = Decimal('0.0054') * cuenta_total_int * Decimal(saldo_total) # Campo 13 de la cuenta
+        print(interes_num)
+        interes = interes_num.quantize(Decimal('0.01'), rounding=ROUND_UP)
+        subtotal = saldo_total + interes
         total = subtotal + total_pagar
-
 
         context = {
             'mes_facturacion': mes_facturacion,  # Agrega los convenios al contexto
@@ -157,7 +181,10 @@ def usuarios_consulta_cuentas_detalle(request, cuenta_id):
             'cuentas': cuentas_result,
             'cuenta': cuenta,
             'subtotal': subtotal,
-            'total': total
+            'total': total,
+            'cuenta_total': cuenta_total,
+            'saldo_total': saldo_total,
+            'interes': interes
         }
 
         return render(request, 'usuarios_consulta_cuentas_detalle.html', context)
