@@ -17,19 +17,19 @@
     <div class="container">
         <div class="row">
             <div class="col-6 col-sm-3 p-3"><strong>Cedula:</strong></div>
-            <div class="col-sm-9 p-3">{{ cliente.cedula }}</div>
+            <div class="col-sm-9 p-3">{{ cedula }}</div>
 
             <!-- Force next columns to break to new line -->
             <div class="w-100"></div>
 
             <div class="col-6 col-sm-3 p-3"><strong>Cliente:</strong></div>
-            <div class="col-sm-9 p-3">{{ cliente.nombre }}</div>
+            <div class="col-sm-9 p-3">{{ nombre }}</div>
 
             <!-- Force next columns to break to new line -->
             <div class="w-100"></div>
 
             <div class="col-6 col-sm-3 p-3"><strong>Correo:</strong></div>
-            <div class="col-sm-9 p-3">{{ cliente_data.correo }}</div>
+            <div class="col-sm-9 p-3">{{ correo }}</div>
 
             <div class="w-100"></div>
             {% if cliente.celular == '' %}
@@ -37,7 +37,7 @@
                 <div class="col-sm-9 p-3">Actualice sus Datos!</div>
             {% else %}
                 <div class="col-6 col-sm-3 p-3"><strong>Celular:</strong></div>
-                <div class="col-sm-9 p-3">{{ cliente_data.celular }}</div>
+                <div class="col-sm-9 p-3">{{ celular }}</div>
 
             {% endif %}
 
