@@ -42,18 +42,17 @@ def login_view(request):
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     login(request, user)
+                    messages.success(request, 'Bienvenido')
                     return redirect('menu_usuarios')
                 else:
-                    print("Usuario o contraseña incorrectos")
                     messages.error(request, 'Usuario o contraseña incorrectos.')
             else:
-                # Mostrar los errores del formulario
-                print(f"Errores del formulario: {form.errors}")
-                messages.error(request, 'Formulario no válido.')
+
+                messages.error(request, 'Activa tu cuenta con el código de activación')
 
         except User.DoesNotExist:
-            print("Usuario no encontrado")
-            messages.error(request, 'Usuario no encontrado.')
+
+            messages.error(request, 'Usuario no Registrado.')
 
     else:
         form = LoginForm()
