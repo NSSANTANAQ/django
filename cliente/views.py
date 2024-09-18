@@ -159,13 +159,13 @@ def usuarios_consulta_cuentas_detalle(request, cuenta_id):
         mes_facturacion = mes_facturacion_result[0]
         cuenta = cuentas_result[0]
         total_pagar = cuenta[4]
-        cuenta_total_int = int(cuenta_total)# Campo 4 de la cuenta
-        print(cuenta_total)
-        interes_num = Decimal('0.0054') * cuenta_total_int * Decimal(saldo_total) # Campo 13 de la cuenta
-        print(interes_num)
+        cuenta_total_int = int(cuenta_total)
+
+        cuenta_total_int = cuenta_total_int if cuenta_total_int is not None else Decimal(0)
+        saldo_total = saldo_total if saldo_total is not None else Decimal(0)
+
+        interes_num = Decimal('0.0054') * Decimal(cuenta_total_int) * Decimal(saldo_total)
         interes = interes_num.quantize(Decimal('0.01'), rounding=ROUND_UP)
-        if interes == None:
-            interes = 0
         subtotal = saldo_total + interes
         total = subtotal + total_pagar
 
