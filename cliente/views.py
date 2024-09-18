@@ -164,6 +164,8 @@ def usuarios_consulta_cuentas_detalle(request, cuenta_id):
         interes_num = Decimal('0.0054') * cuenta_total_int * Decimal(saldo_total) # Campo 13 de la cuenta
         print(interes_num)
         interes = interes_num.quantize(Decimal('0.01'), rounding=ROUND_UP)
+        if interes == None:
+            interes = 0
         subtotal = saldo_total + interes
         total = subtotal + total_pagar
 
