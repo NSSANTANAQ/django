@@ -172,7 +172,7 @@ def registro_usuario_ajax(request):
             user.save()
 
             # Enviar el correo de activación
-            send_activation_email(user)
+            # send_activation_email(user)
 
             return JsonResponse({'status': 'success', 'message': 'Usuario registrado exitosamente.'})
         else:
