@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Activar Cuenta</title>
+    {% load static %}
+    <link rel="shortcut icon" type="img/png" href="{% static 'images/favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        /* CSS personalizado para centrar todo el contenido */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+        .main-container {
+            height: 100vh; /* Hace que el contenedor tenga el 100% de la altura de la ventana */
+            display: flex;
+            justify-content: center; /* Centra verticalmente */
+            align-items: center; /* Centra horizontalmente */
+            text-align: center;
+            background-color: #f8f9fa; /* Fondo del contenedor principal */
+        }
+        .login-section {
+            width: 100%;
+            max-width: 450px; /* Ancho máximo del contenedor de la imagen y formulario */
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff; /* Color de fondo del contenedor */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra del contenedor principal */
+        }
+        .login-section img {
+            max-width: 100%; /* Asegura que la imagen no exceda el ancho del contenedor */
+            height: auto; /* Mantiene la proporción de la imagen */
+        }
+        .login-form {
+            margin-top: 20px;
+            max-width: 100%; /* Asegura que el formulario no exceda el ancho del contenedor */
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9; /* Color de fondo del formulario */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera para el formulario */
+        }
+        .btn-custom {
+            width: 100%; /* Botón ocupa todo el ancho del formulario */
+        }
+
+        /* Media Query para pantallas de móviles */
+    @media (max-width: 768px) {
+        .login-section {
+            transform: scale(1.1); /* Aumenta el tamaño del contenido (20% más grande) */
+            max-width: 80%; /* El contenedor toma todo el ancho disponible */
+        }
+        .main-container {
+            padding: 5; /* Elimina el padding para aprovechar el espacio */
+        }
+    }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="login-section">
+        <img src="{% static 'images/epmapasverde.png' %}" class="rounded mx-auto d-block" width="200" height="200" alt="">
+        <div class="login-form">
+    <form method="POST" action="" onsubmit="showLoadingModal()">
+        {% csrf_token %}
+        <label for="codigo">Ingrese Código de activación</label>
+        <input type="text" name="codigo" aria-label="Ingrese el codigo" required>
+
+        <!-- Div para mostrar mensajes -->
+        <div id="verificationMessage" style="margin: 10px 0; font-size: 14px; color: red;"></div>
+
+        <!-- Contenedor para los botones -->
+        <div class="button-group">
+            <button type="submit" class="btn btn-success">Activar</button>
+            <a type='button' href="{% url 'login' %}" class="btn btn-danger">Cancelar</a>
+        </div>
+    </form>
+</div>
+        <div class="text-center mt-3">
+             <p>¿Eres nuevo? <a href="{% url 'proceso_signup' %}">Registrate</a></p>
+            <p>¡Visita nuestras Redes Sociales para estar Informado!</p>
+            <a target="_blank" type="button" href="https://www.facebook.com/EpmapaSamborondon/?locale=es_LA" class="btn btn-outline-primary btn-sm mx-2">
+                <i class="fa fa-facebook-official" aria-hidden="true"></i>
+            </a>
+            <a  target="_blank" type="button" href="https://x.com/EPMAPASambo/" class="btn btn-outline-primary btn-sm mx-2">
+                <i class="fa fa-twitter" aria-hidden="true"></i>
+            </a>
+            <a  target="_blank" type="button" href="https://www.youtube.com/@epmapas" class="btn btn-outline-primary btn-sm mx-2">
+                <i class="fa fa-youtube-play" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container">
+    {% if messages %}
+        {% for message in messages %}
+        <div class="toast align-items-center text-bg-{{ message.tags }} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ message }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+
+<!-- Modal de Carga -->
+<div id="loadingModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="loader"></div>
+    <strong>Activando</strong>
+      <strong style="font-size:12px">Por favor espere..</strong>
+  </div>
+   <!-- Estilos para el Loader -->
+<style>
+  .modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+  }
+
+  .modal-content {
+    max-width: 150px; /* Limita el ancho del modal */
+    width: 80%; /* Para que se adapte a pantallas pequeñas */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 60px;
+    height: 60px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+
+// Función para actualizar el contenido del div con mensajes
+function mostrarMensajes() {
+    const verificationMessageDiv = document.getElementById('verificationMessage');
+
+    // Si existen mensajes en el contexto, actualizarlos en el div
+    {% if messages %}
+        let messagesHtml = '';
+        {% for message in messages %}
+            messagesHtml += '{{ message }}<br>';
+        {% endfor %}
+        verificationMessageDiv.innerHTML = messagesHtml;
+    {% endif %}
+}
+
+// Ejecutar la función después de que la página haya cargado
+window.onload = function() {
+    mostrarMensajes();
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+    var toastElements = document.querySelectorAll('.toast');
+    var toasts = Array.from(toastElements).map(function (toastElement) {
+        return new bootstrap.Toast(toastElement);
+    });
+    toasts.forEach(function (toast) {
+        toast.show();
+    });
+});
+
+function showLoadingModal() {
+    document.getElementById('loadingModal').style.display = 'flex';
+}
+</script>
+</body>
+</html>
+
+
+
+
+
+
+

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 import os
 from pathlib import Path
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,7 @@ SECRET_KEY = 'django-insecure-rc^*w^w&6g9_(uvx#6s*bnt!w)l0rdi%!l7mv#y%uc&x%wo5pk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
 
 # FORM SUBMISSION
 # Comment out the following line and place your railway URL, and your production URL in the array.
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
+    'cliente',
 ]
 
 MIDDLEWARE = [
@@ -81,15 +84,59 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ["PGDATABASE"],
-        'USER': os.environ["PGUSER"],
-        'PASSWORD': os.environ["PGPASSWORD"],
-        'HOST': os.environ["PGHOST"],
-        'PORT': os.environ["PGPORT"],
-    }
+        'NAME': "railway",
+        'USER': "postgres",
+        'PASSWORD': "XWNyYyJwiuHcXmaHxkbAozJjHZKNqTeT",
+        # 'HOST': "autorack.proxy.rlwy.net",
+        # 'PORT': "15788",
+        'HOST': "postgres.railway.internal",
+        'PORT': "5432",
+    },
+    'railway': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Ejemplo con PostgreSQL
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'TzOSnbbVhSPuqzcHtDeDQxeFPtfuDCie',
+        # 'HOST': 'junction.proxy.rlwy.net',
+        # 'PORT': '29129',
+        'HOST': "meticulous-empathy.railway.internal",
+        'PORT': "5432",
+        # 'OPTIONS': {
+        #     'options': '-c search_path=administracion,auditoria,financiero,seguridad'
+        # }
+    },
 }
 
+LOGIN_URL = 'login'
 
+LOGIN_REDIRECT_URL = '/cliente/menu_usuarios/'
+
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+CSRF_TRUSTED_ORIGINS = [
+
+    'https://serviciosenlinea.epmapas.gob.ec',
+    'https://django-server-production-b121.up.railway.app',
+]
+
+# Si se establece en True, la sesión se eliminará cuando el usuario cierre el navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+STATIC_URL = '/static/'
+
+# Carpeta donde se recopilarán los archivos estáticos
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Si usas archivos de usuario/media, también configúralos
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# CSRF_COOKIE_SECURE = True
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -112,7 +159,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'UTC'
 
@@ -124,11 +171,24 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MESSAGE_TAGS = {
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}
+
+# Correo electronico
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.epmapas.gob.ec'  # Tu servidor SMTP
+EMAIL_PORT = 587  # Puerto de tu servidor SMTP
+EMAIL_USE_TLS = True  # Usar TLS para el correo electrónico
+EMAIL_HOST_USER = 'serviciosenlinea@epmapas.gob.ec'  # Tu dirección de correo
+EMAIL_HOST_PASSWORD = 'EPMAPAS2024****'  # Contraseña de tu correo
