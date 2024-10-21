@@ -30,11 +30,10 @@ def login_view(request):
 
         try:
             # Intentamos obtener el usuario por el username
-            user = get_object_or_404(User, username= username)
+            user = User.objects.get(username=username)
 
             # Verificamos si el usuario está activo
             if not user.is_active:
-
                 return redirect('activar_cuenta_modal',  user.pk)
 
             # Si el usuario está activo, procedemos con la validación del formulario
@@ -49,7 +48,7 @@ def login_view(request):
             else:
                 messages.error(request, 'Activa tu cuenta con el código de activación')
 
-        except user.DoesNotExist:
+        except User.DoesNotExist:  # Aquí es donde capturamos el error si el usuario no existe
             messages.error(request, 'Usuario no Registrado.')
 
     else:
