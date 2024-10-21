@@ -47,11 +47,9 @@ def login_view(request):
                 else:
                     messages.error(request, 'Usuario o contraseña incorrectos.')
             else:
-
                 messages.error(request, 'Activa tu cuenta con el código de activación')
 
-        except User.DoesNotExist:
-
+        except user.DoesNotExist:
             messages.error(request, 'Usuario no Registrado.')
 
     else:
