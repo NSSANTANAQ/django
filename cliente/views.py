@@ -3,7 +3,7 @@ from django.shortcuts import render
 from .models import AdCliente, AdCuenta
 from django.db import connections
 from django.contrib.auth.decorators import login_required
-
+from django.contrib import messages
 
 @login_required(login_url='login')
 def menu_usuarios(request):
@@ -79,7 +79,7 @@ def usuarios_consulta_cuentas(request):
         'cliente': cliente_data,  # Pasar el diccionario de datos del cliente
         'cuentas': cuentas_result,
     }
-
+    messages.success(request, 'Exito')
     return render(request, 'usuarios_consulta_cuentas.html', context)
 
 @login_required(login_url='login')

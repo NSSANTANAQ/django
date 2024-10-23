@@ -6,7 +6,7 @@
     {% load static %}
     <link rel="shortcut icon" type="img/png" href="{% static 'images/favicon.png' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link href="{% static 'css/toastr.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         /* CSS personalizado para centrar todo el contenido */
@@ -156,12 +156,48 @@
     100% { transform: rotate(360deg); }
   }
 </style>
+
+ {% if messages %}
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="{% static 'js/toastr.min.js' %}"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-bottom-right",  // Posición del mensaje
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                };
+
+                {% for message in messages %}
+                {% if message.tags == 'error' %}
+                    toastr.error('{{ message }}');
+                {% elif message.tags == 'success' %}
+                    toastr.success('{{ message }}');
+                {% endif %}
+            {% endfor %}
+            });
+        </script>
+    {% endif %}
+
 </div>
 
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="{% static 'js/toastr.min.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
     var errorCount = document.getElementById('error-count').getAttribute('data-error-count');
