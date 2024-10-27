@@ -114,7 +114,7 @@ LOGIN_REDIRECT_URL = '/cliente/menu_usuarios/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 CSRF_TRUSTED_ORIGINS = [
-    # 'https://127.0.0.1',
+
     'https://serviciosenlinea.epmapas.gob.ec',
     'https://django-server-production-b121.up.railway.app',
 ]
@@ -188,7 +188,7 @@ MESSAGE_TAGS = {
 # Correo electronico
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.epmapas.gob.ec'  # Tu servidor SMTP
-EMAIL_PORT = 587  # Puerto de tu servidor SMTP
-EMAIL_USE_TLS = True  # Usar TLS para el correo electrónico
+EMAIL_PORT = 465  # Puerto de tu servidor SMTP
+EMAIL_USE_SSL = True  # Usar TLS para el correo electrónico
 EMAIL_HOST_USER = 'serviciosenlinea@epmapas.gob.ec'  # Tu dirección de correo
 EMAIL_HOST_PASSWORD = 'EPMAPAS2024****'  # Contraseña de tu correo

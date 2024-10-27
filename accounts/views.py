@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from django.conf import settings
+from django.utils.encoding import force_bytes
 from .forms import SignUpForm,LoginForm, ConsultaClienteForm
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -19,7 +20,14 @@ from django.utils import timezone
 from datetime import timedelta
 from django.core.mail import BadHeaderError
 from django.http import HttpResponse
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
+from django.template.loader import render_to_string
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+from django.contrib.auth import get_user_model
+from django.core.mail import EmailMessage, BadHeaderError
 import socket
 
 def login_view(request):
@@ -41,7 +49,7 @@ def login_view(request):
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     login(request, user)
-                    messages.success(request, 'Bienvenido')
+                    messages.success(request, f'Bienvenido!, {request.user.username}')
                     return redirect('menu_usuarios')
                 else:
                     messages.error(request, 'Usuario o contraseña incorrectos.')
@@ -168,10 +176,13 @@ def registro_usuario_ajax(request):
             user.is_active = False  # El usuario no está activo hasta que se active por correo
             user.save()
 
-            # Enviar el correo de activación
-            # send_activation_email(user)
+            resultado_envio = send_activation_email(user)
 
-            return JsonResponse({'status': 'success', 'message': 'Usuario registrado exitosamente.'})
+            if resultado_envio == 1:
+                return JsonResponse({'status': 'success', 'message': 'Usuario registrado exitosamente.'})
+            else:
+                return JsonResponse({'status': 'success', 'message': 'Error del servicio intentelo mas tarde'})
+
         else:
             # Crear una lista para almacenar los errores
             errors = []
@@ -213,18 +224,21 @@ def send_activation_email(user):
 
             )
         except BadHeaderError:
+            print('Error en el servicio, por favor intente de nuevo más tarde.')
             # Maneja los errores relacionados con encabezados inválidos
-            return HttpResponse('Error en el servicio, por favor intente de nuevo más tarde.', status=500)
+            return 0
         except Exception as e:
+            print('Error en el servicio, por favor intente de nuevo más tarde.')
             # Maneja otros errores relacionados con el envío de correos
-            return HttpResponse('Error en el servicio, por favor intente de nuevo más tarde.', status=500)
+            return 0
 
         # Si todo sale bien, puedes retornar un mensaje de éxito o redirigir al usuario
-        return HttpResponse('Código de activación enviado con éxito.')
+        print('Código de activación enviado con éxito.')
+        return 1
 
     except Exception as e:
         # Maneja cualquier otro error en la función
-        return HttpResponse('Error en el servicio, por favor intente de nuevo más tarde.', status=500)
+        return 0
 
 
 def verificar_codigo_activacion(request):
@@ -286,3 +300,74 @@ def activar_cuenta_modal(request, pk):
 def cuenta_activada_exito(request):
 
     return render(request, 'cuenta_activada_exito.html')
+
+def password_reset_request(request):
+    if request.method == "POST":
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data['email']
+            associated_users = User.objects.filter(email=data)
+            if associated_users.exists():
+                for user in associated_users:
+                    subject = "Cambio de contraseña solicitado"
+                    html_email_template_name = "password_reset_email.html"
+                    c = {
+                        "email": user.email,
+                        'domain': 'serviciosenlinea.epmapas.gob.ec',
+                        'site_name': 'Recuperar Contraseña',
+                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                        "user": user,
+                        'token': default_token_generator.make_token(user),
+                        'protocol': 'http',
+                    }
+                    email_html_content = render_to_string(html_email_template_name, c)
+                    email = EmailMessage(
+                        subject=subject,
+                        body=email_html_content,
+                        from_email='serviciosenlinea@epmapas.gob.ec',
+                        to=[user.email],
+                    )
+                    email.content_subtype = "html"  # Esto asegura que el correo se envíe como HTML
+
+                    try:
+                        email.send(fail_silently=False)
+                    except BadHeaderError:
+                        return HttpResponse('Invalid header found.')
+
+                    messages.success(request, 'El enlace para restablecer la contraseña ha sido enviado a tu correo electrónico.')
+                    return redirect('envio_exitoso_enlace_email')
+            else:
+                messages.error(request, 'No existe una cuenta asociada a ese correo electrónico.')
+                return render(request=request, template_name="recuperar_password.html", context={"form": form})
+
+    form = PasswordResetForm()
+    return render(request=request, template_name="recuperar_password.html", context={"form": form})
+
+
+def envio_exitoso_enlace_email(request):
+    return render(request, 'envio_exitoso_enlace_email.html')
+
+def my_password_reset_confirm(request, uidb64, token):
+        UserModel = get_user_model()
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = UserModel._default_manager.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
+            user = None
+
+        if user is not None and default_token_generator.check_token(user, token):
+            if request.method == 'POST':
+                form = SetPasswordForm(user, request.POST)
+                if form.is_valid():
+                    form.save()
+                    # Redirige a una página de confirmación o muestra un mensaje de éxito
+                    return redirect('password_reset_exito')
+            else:
+                form = SetPasswordForm(user)
+            return render(request, 'password_reset_confirm.html', {'form': form})
+        else:
+            # Redirige a una página de error o muestra un mensaje de error
+            return render(request, 'invalid_token.html')
+
+def password_reset_exito(request):
+    return render(request,'password_reset_exito.html')

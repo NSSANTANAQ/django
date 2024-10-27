@@ -1,9 +1,11 @@
 from decimal import Decimal, ROUND_UP
-from django.shortcuts import render
 from .models import AdCliente, AdCuenta
 from django.db import connections
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import logout
 
 @login_required(login_url='login')
 def menu_usuarios(request):
@@ -34,7 +36,7 @@ def usuarios_perfil(request):
         else:
             # Si no se encuentra el cliente, se puede manejar el caso
             request.session['cliente_data'] = None
-
+    messages.success(request, 'Exito')
     return render(request, 'usuarios_perfil.html', contexto)
 
 @login_required(login_url='login')
@@ -108,7 +110,6 @@ def usuarios_consulta_cuentas_detalle(request, cuenta_id):
 
     # Recuperar los datos del cliente desde la sesión
     cliente_data = request.session.get('cliente_data')
-
 
     with connections['railway'].cursor() as cursor:
         # Consulta para obtener la cuenta
@@ -188,3 +189,28 @@ def usuarios_consulta_cuentas_detalle(request, cuenta_id):
             'error': 'Cuenta no encontrada'
         }
         return render(request, 'usuarios_consulta_cuentas_detalle.html', context)
+@login_required(login_url='login')
+def usuarios_noticias(request):
+    messages.success(request, 'Exito')
+    return render(request, 'usuarios_noticias.html')
+@login_required(login_url='login')
+def usuarios_cambiar_password(request):
+    user = request.user
+
+    if request.method == 'POST':
+
+        form = SetPasswordForm(user, request.POST)
+        if form.is_valid():
+            form.save()
+            # Redirige a una página de confirmación o muestra un mensaje de éxito
+            messages.success(request,'Cambio de Contraseña Exitoso, vuelve a iniciar sesion con tu nueva contraseña')
+            return redirect('usuarios_cambiar_password_exito')
+    else:
+        form = SetPasswordForm(user)
+        messages.success(request, 'Exito')
+    return render(request, 'usuarios_cambiar_password.html', {'form': form})
+
+def usuarios_cambiar_password_exito(request):
+    logout(request)
+    messages.success(request, 'Contraseña cambiada con Exito')
+    return render(request, 'usuarios_cambiar_password_exito.html')

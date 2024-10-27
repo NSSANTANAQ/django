@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Activar Cuenta</title>
+    <title>Envio de Enlace</title>
     {% load static %}
     <link rel="shortcut icon" type="img/png" href="{% static 'images/favicon.png' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
@@ -67,13 +67,13 @@
     <div class="login-section">
         <img src="{% static 'images/epmapasverde.png' %}" class="rounded mx-auto d-block" width="200" height="200" alt="">
         <div class="login-form">
-            <p class="text-center mb-4">¡Felicidades!</p>
-            <p class="text-center mb-4">Has Activado tu cuenta con exito, ya puedes Iniciar Sesión con tu Contraseña y tu Usuario.</p>
+            <p class="text-center mb-4">¡Enlace de recuperación de Contraseña!</p>
+            <p class="text-center mb-4">Perfecto hemos enviado un enlace a tu correo electrónico registrado para el proceso de recuperación de contraseña</p>
             <div class="text-center">
             <a type="button" id="" href="{% url 'login' %}" class="btn btn-outline-secondary">Iniciar Sesión</a>
             </div>
         <div class="text-center mt-3">
-             <p>¿Eres nuevo? <a href="{% url 'proceso_signup' %}">Registrate</a></p>
+
             <p>¡Visita nuestras Redes Sociales para estar Informado!</p>
             <a target="_blank" type="button" href="https://www.facebook.com/EpmapaSamborondon/?locale=es_LA" class="btn btn-outline-primary btn-sm mx-2">
                 <i class="fa fa-facebook-official" aria-hidden="true"></i>

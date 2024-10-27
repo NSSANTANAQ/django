@@ -29,6 +29,11 @@
                         Menu
                     </li>
                     <li class="sidebar-item">
+                        <a href="{% url 'usuarios_noticias' %}" class="sidebar-link mx-3" onclick="showLoadingModal()">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i> Noticias
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
                         <a href="{% url 'usuarios_consulta_cuentas' %}" class="sidebar-link mx-3" onclick="showLoadingModal()">
                             <i class="fa fa-th-list" aria-hidden="true"></i> Cuentas
                         </a>
@@ -48,12 +53,17 @@
                     <i class="fa fa-moon-o" aria-hidden="true"></i>
                     <i class="fa fa-sun-o" aria-hidden="true"></i>
                 </a>
-                        <li class="nav-item dropdown">
-                            <a href="#" data-bs-toggle="dropdown" class="nav-icon pe-md-0">
-                                <img src="{% static 'images/usuario.png' %}" class="avatar img-fluid rounded" alt="">
-                            </a>
+                        <li class="nav-item dropdown ">
+                            <a href="#" class="nav-icon user-card-toggle" data-bs-toggle="dropdown">
+                                <div class="user-info">
+            <span class="user-name">{{ request.user.username }}</span>
+            <span class="user-handle">@Usuario</span> <!-- Puedes reemplazar @user_handle con el valor adecuado -->
+        </div>
+        <img src="{% static 'images/usuario.png' %}" class="avatar" alt="">
+    </a>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <a href="{% url 'usuarios_perfil' %}" onclick="showLoadingModal()" class="dropdown-item disable" >Perfil</a>
+                                <a href="{% url 'usuarios_cambiar_password' %}" onclick="showLoadingModal()" class="dropdown-item disable" >Cambio de Contraseña</a>
 <!--                                <a href="#" class="dropdown-item disable" >Configuración</a>-->
                                 <a href="{% url 'logout' %}" onclick="showLoadingModal()" class="dropdown-item">Cerrar Sesión</a>
                             </div>
@@ -158,24 +168,16 @@
                         <div class="col-6 text-start">
                             <p class="mb-0">
                                 <a href="#" class="text-muted">
-                                    <strong>SISTEMA Vrs. 0.2.1</strong>
+                                    <strong>SISTEMA Vrs. 1.1.2</strong>
                                 </a>
                             </p>
                         </div>
                         <div class="col-6 text-end">
                             <ul class="list-inline">
                                 <li class="list-inline-item">
-                                    <a href="#" class="text-muted">Facebook</a>
+                                    <a href="#" class="text-muted">Empresa Pública Municipal de Agua Potable y Alcantarillado de Samborondón</a>
                                 </li>
-                                <li class="list-inline-item">
-                                    <a href="#" class="text-muted">Instagran</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#" class="text-muted">Youtube</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#" class="text-muted">X</a>
-                                </li>
+
                             </ul>
                         </div>
                     </div>
@@ -307,6 +309,56 @@ if(isLight()){
 
 
 <style>
+    .nav-item .user-card-toggle {
+    display: flex;
+    align-items: center;
+    background-color: #020133; /* Fondo púrpura */
+    padding: 1px 8px;
+    border-radius: 15px;
+    gap: 5px; /* Espacio entre el nombre y la imagen */
+    color: white;
+    text-decoration: none;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ff00ff; /* Color de fondo para el avatar */
+    margin-right: 10px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 5px;
+}
+
+.user-name {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.user-handle {
+    font-size: 0.8em;
+    color: #b3b3b3;
+}
+
+.user-dropdown-menu {
+    background-color: #3d1e75; /* Mismo fondo que el contenedor */
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.user-dropdown-menu .dropdown-item {
+    color: white;
+}
+
+.user-dropdown-menu .dropdown-item:hover {
+    background-color: #2e145c;
+}
+
+
 
     /* Para mensajes de éxito (success) */
 .toast-success {
@@ -376,7 +428,7 @@ if(isLight()){
 .sidebar-item {
     font-size: 20px;
     text-align: center;
-    padding: 10px;
+    padding: 5px;
     border-radius: 5px;
     transition: background-color 0.3s ease; /* Transición suave */
 }
@@ -522,8 +574,8 @@ a.sidebar-link {
 }
 
 .avatar {
-    height: 40px;
-    width: 40px;
+    height: 30px;
+    width: 30px;
 }
 
 .navbar-expand .navbar-nav {
