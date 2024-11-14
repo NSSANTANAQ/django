@@ -133,4 +133,4 @@ cython_debug/
 pyrightconfig.json
 
 # cloudinary
-cloudinary.env
+.env
