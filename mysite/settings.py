@@ -198,7 +198,6 @@ EMAIL_HOST_PASSWORD = 'EPMAPAS2024****'  # Contraseña de tu correo
 # Configura Cloudinary como el almacenamiento predeterminado para archivos media
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', cast=bool)
+
 CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY')
 CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET')
