@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 from django.contrib.messages import constants as messages
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -197,9 +198,10 @@ EMAIL_HOST_PASSWORD = 'EPMAPAS2024****'  # Contraseña de tu correo
 # Configura Cloudinary como el almacenamiento predeterminado para archivos media
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Configuración de Cloudinary
-CLOUDINARY = {
-    'cloud_name': 'dkgwebjgi',
-    'api_key': '845616653696114',
-    'api_secret': '59V-nsHJh9hSeDOOnIKI8fUrcPo',
-}
+# Configuraciones usando variables del archivo .env
+SECRET_KEY = config('SECRET_KEY', default='clave-por-defecto')
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+# Claves de Cloudinary u otros servicios
+CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY')
+CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET')
