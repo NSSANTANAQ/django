@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-rc^*w^w&6g9_(uvx#6s*bnt!w)l0rdi%!l7mv#y%uc&x%wo5pk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
 
@@ -42,8 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
+    'cloudinary_storage',
     'accounts',
     'cliente',
+    'administrador',
 ]
 
 MIDDLEWARE = [
@@ -114,7 +117,6 @@ LOGIN_REDIRECT_URL = '/cliente/menu_usuarios/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 CSRF_TRUSTED_ORIGINS = [
-
     'https://serviciosenlinea.epmapas.gob.ec',
     'https://django-server-production-b121.up.railway.app',
 ]
@@ -127,13 +129,12 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 STATIC_URL = '/static/'
-
-# Carpeta donde se recopilarán los archivos estáticos
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "accounts/static")]
 
 # Si usas archivos de usuario/media, también configúralos
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'accounts/media')
 
 
 # CSRF_COOKIE_SECURE = True
@@ -161,17 +162,16 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Guayaquil'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -192,3 +192,14 @@ EMAIL_PORT = 465  # Puerto de tu servidor SMTP
 EMAIL_USE_SSL = True  # Usar TLS para el correo electrónico
 EMAIL_HOST_USER = 'serviciosenlinea@epmapas.gob.ec'  # Tu dirección de correo
 EMAIL_HOST_PASSWORD = 'EPMAPAS2024****'  # Contraseña de tu correo
+
+
+# Configura Cloudinary como el almacenamiento predeterminado para archivos media
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Configuración de Cloudinary
+CLOUDINARY = {
+    'cloud_name': 'dkgwebjgi',
+    'api_key': '845616653696114',
+    'api_secret': '59V-nsHJh9hSeDOOnIKI8fUrcPo',
+}

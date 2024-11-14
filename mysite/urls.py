@@ -16,11 +16,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import redirect
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
 
     path('', lambda request: redirect('login')),
     path('accounts/', include('accounts.urls')),  # Incluye las rutas de 'accounts'
     path('cliente/', include('cliente.urls'), name="cliente"),  # Incluye las rutas de 'cliente'
+    path('administrador/', include('administrador.urls'), name="administrador"),  # Incluye las rutas de 'administrador'
 
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

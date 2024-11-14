@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EPMAPAS</title>
     {% load static %}
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="shortcut icon" type="img/png" href="{% static 'images/favicon.png' %}">
@@ -20,31 +19,29 @@
 <body>
     <div class="wrapper">
         <aside id="sidebar" class="js-sidebar">
-    <div class="h-100">
-        <div class="sidebar-logo">
-            <img src="{% static 'images/logosolo.png' %}" width="50" height="50">
-            <a href="{% url 'menu_usuarios' %}" onclick="clearActiveMenu();showLoadingModal()">EPMAPAS</a>
-        </div>
-        <ul class="sidebar-nav">
-            <li class="sidebar-header">Menu</li>
-            <li class="sidebar-item" id="menu-noticias">
-                <a href="{% url 'usuarios_noticias' %}" class="sidebar-link mx-3" onclick="setActiveMenu('menu-noticias');showLoadingModal()">
-                    <i class="fa fa-info-circle" aria-hidden="true"></i> Noticias
-                </a>
-            </li>
-            <li class="sidebar-item" id="menu-cuentas">
-                <a href="{% url 'usuarios_consulta_cuentas' %}" class="sidebar-link mx-3" onclick="setActiveMenu('menu-cuentas');showLoadingModal()">
-                    <i class="fa fa-th-list" aria-hidden="true"></i> Cuentas
-                </a>
-            </li>
-            <li class="sidebar-item" id="menu-reportes">
-                <a href="{% url 'usuarios_reportes' %}" class="sidebar-link mx-3" onclick="setActiveMenu('menu-reportes');showLoadingModal()">
-                    <i class="fa fa-file-text-o" aria-hidden="true"></i> Reportes
-                </a>
-            </li>
-        </ul>
-    </div>
-</aside>
+            <!-- Content For Sidebar -->
+            <div class="h-100">
+                <div class="sidebar-logo">
+                    <img src="{% static 'images/logosolo.png' %}" width="50" height="50"><a href="{% url 'menu_usuarios' %}" onclick="showLoadingModal()">EPMAPAS</a>
+                </div>
+                <ul class="sidebar-nav">
+                    <li class="sidebar-header">
+                        Menu Administrador
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="{% url 'admin_noticias' %}" class="sidebar-link mx-3" onclick="showLoadingModal()">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i> Noticias
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="" class="sidebar-link mx-3" onclick="showLoadingModal()">
+                            <i class="fa fa-th-list" aria-hidden="true"></i> Reportes
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </aside>
         <div class="main">
             <nav class="navbar navbar-expand px-3 border-bottom custom-navbar">
                 <button class="btn btn-info" id="sidebar-toggle" type="button">
@@ -65,8 +62,8 @@
         <img src="{% static 'images/usuario.png' %}" class="avatar" alt="">
     </a>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a href="{% url 'usuarios_perfil' %}" onclick="showLoadingModal()" class="dropdown-item disable" >Perfil</a>
-                                <a href="{% url 'usuarios_cambiar_password' %}" onclick="showLoadingModal()" class="dropdown-item disable" >Cambio de Contraseña</a>
+                                <a href="" onclick="showLoadingModal()" class="dropdown-item disable" >Perfil</a>
+                                <a href="" onclick="showLoadingModal()" class="dropdown-item disable" >Cambio de Contraseña</a>
 <!--                                <a href="#" class="dropdown-item disable" >Configuración</a>-->
                                 <a href="{% url 'logout' %}" onclick="showLoadingModal()" class="dropdown-item">Cerrar Sesión</a>
                             </div>
@@ -89,7 +86,7 @@
                             <div class="col-6">
                                 <div class="p-3 m-1">
                                     <h4>EPMAPAS SAMBORONDÓN</h4>
-                                    <p class="mb-0">¡Mejorando el Servicio!</p>
+                                    <p class="mb-0">¡Administrador!</p>
                                 </div>
                             </div>
                             <div class="col-6 align-self-end text-end">
@@ -110,7 +107,7 @@
                                     Importante!
                                 </h4>
                                 <p class="mb-2">
-                                    ¡Los datos se actualizaran en el transcurso de 24 horas!
+                                    ¡Gestion del Administrador!
                                 </p>
                                 <div class="mb-0">
 
@@ -178,7 +175,7 @@
                         <div class="col-6 text-end">
                             <ul class="list-inline">
                                 <li class="list-inline-item">
-                                    <a href="#" class="text-muted">EPMAPAS</a>
+                                    <a href="#" class="text-muted">Empresa Pública Municipal de Agua Potable y Alcantarillado de Samborondón</a>
                                 </li>
 
                             </ul>
@@ -451,11 +448,6 @@ if(isLight()){
     color: #ddd; /* Color del texto al hacer hover */
 }
 
-.sidebar-item.active .sidebar-link {
-    background-color: #444; /* Color del fondo al hacer hover */
-    color: #ddd; /* Color del texto al hacer hover */
-}
-
 /* Evitar que el contenedor dropdown se seleccione en hover */
 .sidebar-dropdown:hover {
     background-color: transparent; /* Asegura que el contenedor no cambie */
@@ -667,78 +659,9 @@ html[data-bs-theme="dark"] .theme-toggle .fa-moon-o {
 html[data-bs-theme="light"] .theme-toggle .fa-sun-o {
     display: none;
 }
-
-.sidebar-link.active {
-    background-color: silver; /* Color de fondo para la opción activa */
-    color: white; /* Color de texto */
-    border-radius: 5px;
-}
-
-
-
 </style>
 
 <script>
-     // Función para desactivar todos los elementos del menú
-    function clearActiveMenu() {
-        // Eliminar la clase "active" de todos los elementos del menú
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.classList.remove('active');
-        });
-
-        // Eliminar el estado activo del almacenamiento local
-        localStorage.removeItem('activeMenu');
-    }
-
-    // Función para establecer la clase "active" en el menú
-    function setActiveMenu(menuId) {
-        // Eliminar la clase "active" de todos los elementos del menú
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.classList.remove('active');
-        });
-
-        // Añadir la clase "active" al elemento seleccionado
-        const activeMenu = document.getElementById(menuId);
-        if (activeMenu) {
-            activeMenu.classList.add('active');
-        }
-
-        // Guardar el estado activo en el almacenamiento local
-        localStorage.setItem('activeMenu', menuId);
-    }
-
-    // Restaurar el estado activo al cargar la página
-    document.addEventListener('DOMContentLoaded', () => {
-        const activeMenuId = localStorage.getItem('activeMenu');
-        if (activeMenuId) {
-            setActiveMenu(activeMenuId);
-        }
-    });
-
-    // Función para establecer la clase "active" en el menú
-    function setActiveMenu(menuId) {
-        // Eliminar la clase "active" de todos los elementos del menú
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.classList.remove('active');
-        });
-
-        // Añadir la clase "active" al elemento seleccionado
-        const activeMenu = document.getElementById(menuId);
-        if (activeMenu) {
-            activeMenu.classList.add('active');
-        }
-
-        // Guardar el estado activo en el almacenamiento local
-        localStorage.setItem('activeMenu', menuId);
-    }
-
-    // Restaurar el estado activo al cargar la página
-    document.addEventListener('DOMContentLoaded', () => {
-        const activeMenuId = localStorage.getItem('activeMenu');
-        if (activeMenuId) {
-            setActiveMenu(activeMenuId);
-        }
-    });
 
     function showLoadingModal() {
   document.getElementById('loadingModal').style.display = 'flex';

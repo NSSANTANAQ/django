@@ -30,11 +30,12 @@ from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage, BadHeaderError
 import socket
 
+
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
-        username = form.data.get('username')  # Obtenemos el username del formulario sin validarlo aún
-        password = form.data.get('password')  # Obtenemos el password del formulario sin validarlo aún
+        username = form.data.get('username')  # Obtenemos el username del formulario
+        password = form.data.get('password')  # Obtenemos el password del formulario
 
         try:
             # Intentamos obtener el usuario por el username
@@ -42,22 +43,27 @@ def login_view(request):
 
             # Verificamos si el usuario está activo
             if not user.is_active:
-                return redirect('activar_cuenta_modal',  user.pk)
+                return redirect('activar_cuenta_modal', user.pk)
 
-            # Si el usuario está activo, procedemos con la validación del formulario
+            # Validamos el formulario
             if form.is_valid():
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     login(request, user)
                     messages.success(request, f'Bienvenido!, {request.user.username}')
-                    return redirect('menu_usuarios')
+
+                    # Redireccionamos según el tipo de usuario
+                    if user.is_staff:  # Usuario admin
+                        return redirect('menu_admin')  # Nombre de la URL del admin
+                    else:  # Usuario regular
+                        return redirect('menu_usuarios')  # Nombre de la URL del cliente
                 else:
                     messages.error(request, 'Usuario o contraseña incorrectos.')
             else:
-                messages.error(request, 'Activa tu cuenta con el código de activación')
+                messages.error(request, 'Activa tu cuenta con el código de activación.')
 
-        except User.DoesNotExist:  # Aquí es donde capturamos el error si el usuario no existe
-            messages.error(request, 'Usuario no Registrado.')
+        except User.DoesNotExist:  # Capturamos el error si el usuario no existe
+            messages.error(request, 'Usuario no registrado.')
 
     else:
         form = LoginForm()

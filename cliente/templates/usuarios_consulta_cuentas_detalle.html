@@ -2,38 +2,38 @@
 {% load static %}
 {% block content %}
 
-<div class="card border-0">
-    <div class="card-header">
-        <h5 class="card-title">
-            Consulta tus Cuentas:
-        </h5>
-        <h6 class="card-subtitle text-muted">
-            Datos del Usuario:
-        </h6>
-    </div>
-    <div class="card-body">
-        <table class="table">
-            <tr class="table-secondary">
-                <th>Cédula RUC</th>
-                <th>Nombre</th>
-                <th>Dirección</th> <!-- Puedes agregar otros campos según tu modelo -->
-            </tr>
-            <tbody class="table-group-divider">
-            <tr>
-                <td>{{ cliente.cedula }}</td>
-                <td>{{ cliente.nombre }}</td>
-                <td>{{ cliente.direccion }}</td> <!-- Puedes agregar otros campos según tu modelo -->
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+<!--<div class="card border-0">-->
+<!--    <div class="card-header">-->
+<!--        <h5 class="card-title">-->
+<!--            Consulta tus Cuentas:-->
+<!--        </h5>-->
+<!--        <h6 class="card-subtitle text-muted">-->
+<!--            Datos del Usuario:-->
+<!--        </h6>-->
+<!--    </div>-->
+<!--    <div class="card-body">-->
+<!--        <table class="table">-->
+<!--            <tr class="table-secondary">-->
+<!--                <th>Cédula RUC</th>-->
+<!--                <th>Nombre</th>-->
+<!--                <th>Dirección</th> &lt;!&ndash; Puedes agregar otros campos según tu modelo &ndash;&gt;-->
+<!--            </tr>-->
+<!--            <tbody class="table-group-divider">-->
+<!--            <tr>-->
+<!--                <td>{{ cliente.cedula }}</td>-->
+<!--                <td>{{ cliente.nombre }}</td>-->
+<!--                <td>{{ cliente.direccion }}</td> &lt;!&ndash; Puedes agregar otros campos según tu modelo &ndash;&gt;-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+<!--    </div>-->
+<!--</div>-->
 <!-- card 1 -->
-<div class="card border-0">
+<div class="card ">
 
-    <div class="card-header">
+    <div class="card-header" >
         <h5 class="card-title" style="display: flex; justify-content: space-between;">
-            <span>Detalle de la Cuenta:  </span>  <strong>Total a Pagar (A)+(B): {{ total }}</strong>
+            <span>Detalle de la Cuenta:  {{ cuenta.8 }}</span>  <strong>Total a Pagar (A)+(B): {{ total }}</strong>
         </h5>
 
     </div>
@@ -146,13 +146,31 @@
     </div>
 </div>
 
+<style>
+    .card {
+        width: 100%; /* Ajusta el ancho al 90% del contenedor padre */
+        max-height: 510px; /* Tamaño máximo para pantallas grandes */
+        margin: 0 auto; /* Centrar el card */
+    }
 
+    .card-body {
+        padding: 20px; /* Más espacio interno en el contenido */
+    }
+
+    .table {
+        width: 100%; /* Asegura que la tabla ocupe todo el espacio disponible */
+    }
+
+    .card-header {
+        font-size: 1.1rem; /* Aumenta el tamaño del texto del encabezado */
+    }
+</style>
 
 
 <style>
 /* Estilo para la tabla que permitirá el scroll vertical */
 .table-responsive {
-  max-height: 240px; /* Establece la altura máxima de la tabla */
+  /* Establece la altura máxima de la tabla */
   overflow-y: auto;
 }
 

@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
+from administrador.models import Noticia
 
 @login_required(login_url='login')
 def menu_usuarios(request):
@@ -189,10 +190,7 @@ def usuarios_consulta_cuentas_detalle(request, cuenta_id):
             'error': 'Cuenta no encontrada'
         }
         return render(request, 'usuarios_consulta_cuentas_detalle.html', context)
-@login_required(login_url='login')
-def usuarios_noticias(request):
-    messages.success(request, 'Exito')
-    return render(request, 'usuarios_noticias.html')
+
 @login_required(login_url='login')
 def usuarios_cambiar_password(request):
     user = request.user
@@ -214,3 +212,13 @@ def usuarios_cambiar_password_exito(request):
     logout(request)
     messages.success(request, 'Contraseña cambiada con Exito')
     return render(request, 'usuarios_cambiar_password_exito.html')
+
+@login_required(login_url='login')
+def usuarios_noticias(request):
+    noticias = Noticia.objects.prefetch_related('imagenes').order_by('-fecha_publicacion')  # Obtén todas las noticias
+    messages.success(request, 'Exito')
+    return render(request, 'usuarios_noticias.html', {'noticias': noticias})
+
+@login_required(login_url='login')
+def usuarios_reportes(request):
+    return render(request, 'usuarios_reportes.html')

@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
 
@@ -12,5 +13,5 @@ urlpatterns = [
     path('usuarios_cambiar_password/', views.usuarios_cambiar_password, name='usuarios_cambiar_password'),
     path('usuarios_cambiar_password_exito/', views.usuarios_cambiar_password_exito, name='usuarios_cambiar_password_exito'),
 
-
+    path('usuarios_reportes/', views.usuarios_reportes, name='usuarios_reportes'),
 ]
