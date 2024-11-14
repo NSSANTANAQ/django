@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-rc^*w^w&6g9_(uvx#6s*bnt!w)l0rdi%!l7mv#y%uc&x%wo5pk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
 
@@ -199,7 +199,7 @@ EMAIL_HOST_PASSWORD = 'EPMAPAS2024****'  # Contraseña de tu correo
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Configuraciones usando variables del archivo .env
-SECRET_KEY = config('SECRET_KEY', default='clave-por-defecto')
+SECRET_KEY = config('SECRET_KEY', default=None)
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Claves de Cloudinary u otros servicios
