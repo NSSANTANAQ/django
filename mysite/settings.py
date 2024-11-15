@@ -14,6 +14,8 @@ import os
 from pathlib import Path
 from django.contrib.messages import constants as messages
 from decouple import config
+from dotenv import load_dotenv
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,13 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-rc^*w^w&6g9_(uvx#6s*bnt!w)l0rdi%!l7mv#y%uc&x%wo5pk'
+# # SECURITY WARNING: keep the secret key used in production secret!
+# SECRET_KEY = 'django-insecure-rc^*w^w&6g9_(uvx#6s*bnt!w)l0rdi%!l7mv#y%uc&x%wo5pk'
+#
+# # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = True
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-ALLOWED_HOSTS = ['serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
+ALLOWED_HOSTS = ['127.0.0.1','serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
 
 # FORM SUBMISSION
 # Comment out the following line and place your railway URL, and your production URL in the array.
@@ -91,20 +93,20 @@ DATABASES = {
         'NAME': "railway",
         'USER': "postgres",
         'PASSWORD': "XWNyYyJwiuHcXmaHxkbAozJjHZKNqTeT",
-        # 'HOST': "autorack.proxy.rlwy.net",
-        # 'PORT': "15788",
-        'HOST': "postgres.railway.internal",
-        'PORT': "5432",
+        'HOST': "autorack.proxy.rlwy.net",
+        'PORT': "15788",
+        # 'HOST': "postgres.railway.internal",
+        # 'PORT': "5432",
     },
     'railway': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Ejemplo con PostgreSQL
         'NAME': 'railway',
         'USER': 'postgres',
         'PASSWORD': 'TzOSnbbVhSPuqzcHtDeDQxeFPtfuDCie',
-        # 'HOST': 'junction.proxy.rlwy.net',
-        # 'PORT': '29129',
-        'HOST': "meticulous-empathy.railway.internal",
-        'PORT': "5432",
+        'HOST': 'junction.proxy.rlwy.net',
+        'PORT': '29129',
+        # 'HOST': "meticulous-empathy.railway.internal",
+        # 'PORT': "5432",
         # 'OPTIONS': {
         #     'options': '-c search_path=administracion,auditoria,financiero,seguridad'
         # }
@@ -118,6 +120,7 @@ LOGIN_REDIRECT_URL = '/cliente/menu_usuarios/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 CSRF_TRUSTED_ORIGINS = [
+    'https://127.0.0.1',
     'https://serviciosenlinea.epmapas.gob.ec',
     'https://django-server-production-b121.up.railway.app',
 ]
@@ -198,6 +201,19 @@ EMAIL_HOST_PASSWORD = 'EPMAPAS2024****'  # Contraseña de tu correo
 # Configura Cloudinary como el almacenamiento predeterminado para archivos media
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+load_dotenv()
+# Carga la clave secreta
+SECRET_KEY = config('SECRET_KEY')
 
+# Modo debug
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+# Configuración de Cloudinary
+CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME')
 CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY')
 CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET')
+
+
+import os
+print("SECRET_KEY desde el archivo .env:", os.getenv("SECRET_KEY"))
+print("SECRET_KEY:", config('SECRET_KEY'))
