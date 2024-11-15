@@ -203,12 +203,9 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 load_dotenv()
 # Carga la clave secreta directamente desde las variables de entorno
-SECRET_KEY = os.getenv('SECRET_KEY', 'valor-por-defecto')
-
-# Modo debug
+SECRET_KEY = os.getenv('SECRET_KEY', 'clave-secreta-por-defecto')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# Configuración de Cloudinary
-CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME')
-CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY')
-CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET')
+CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME', 'cloud_name_por_defecto')
+CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY', 'api_key_por_defecto')
+CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', 'api_secret_por_defecto')
