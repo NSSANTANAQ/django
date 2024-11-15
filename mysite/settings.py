@@ -16,6 +16,9 @@ from django.contrib.messages import constants as messages
 from decouple import config
 from dotenv import load_dotenv
 import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -197,6 +200,11 @@ EMAIL_USE_SSL = True  # Usar TLS para el correo electrónico
 EMAIL_HOST_USER = 'serviciosenlinea@epmapas.gob.ec'  # Tu dirección de correo
 EMAIL_HOST_PASSWORD = 'EPMAPAS2024****'  # Contraseña de tu correo
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+}
 
 # Configura Cloudinary como el almacenamiento predeterminado para archivos media
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
@@ -209,3 +217,7 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME', 'cloud_name_por_defecto')
 CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY', 'api_key_por_defecto')
 CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', 'api_secret_por_defecto')
+
+print("CLOUDINARY_CLOUD_NAME:", os.getenv('CLOUDINARY_CLOUD_NAME'))
+print("CLOUDINARY_API_KEY:", os.getenv('CLOUDINARY_API_KEY'))
+print("CLOUDINARY_API_SECRET:", os.getenv('CLOUDINARY_API_SECRET'))
