@@ -218,6 +218,3 @@ CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME', 'cloud_name_por_defec
 CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY', 'api_key_por_defecto')
 CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', 'api_secret_por_defecto')
 
-print("CLOUDINARY_CLOUD_NAME:", os.getenv('CLOUDINARY_CLOUD_NAME'))
-print("CLOUDINARY_API_KEY:", os.getenv('CLOUDINARY_API_KEY'))
-print("CLOUDINARY_API_SECRET:", os.getenv('CLOUDINARY_API_SECRET'))
