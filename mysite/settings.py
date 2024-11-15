@@ -213,4 +213,5 @@ CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME')
 CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY')
 CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET')
 
-
+print("Variables de entorno disponibles:", os.environ)
+print("SECRET_KEY desde os.environ:", os.environ.get('SECRET_KEY'))
