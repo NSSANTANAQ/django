@@ -202,16 +202,13 @@ EMAIL_HOST_PASSWORD = 'EPMAPAS2024****'  # Contraseña de tu correo
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 load_dotenv()
-# Carga la clave secreta
-SECRET_KEY = config('SECRET_KEY')
+# Carga la clave secreta directamente desde las variables de entorno
+SECRET_KEY = os.getenv('SECRET_KEY', 'valor-por-defecto')
 
 # Modo debug
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 # Configuración de Cloudinary
-CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME')
-CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY')
-CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET')
-
-print("Variables de entorno disponibles:", os.environ)
-print("SECRET_KEY desde os.environ:", os.environ.get('SECRET_KEY'))
+CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME')
+CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY')
+CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET')
