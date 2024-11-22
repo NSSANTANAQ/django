@@ -1,13 +1,9 @@
 {% extends "menu_usuarios.html" %}
 {% load static %}
 {% block content %}
-<div class="container">
-    <div class="row">
-        <!-- Card contenedor principal con fondo blanco y altura de 500px -->
-        <div class="col-12">
-            <div class="card border-0">
-                <!-- Card Header con el título y subtítulo (Estático) -->
-                <div class="card-header">
+
+
+<div class="card-header">
         <h5 class="card-title">
             Noticias.
         </h5>
@@ -25,7 +21,7 @@
                     <div class="card shadow-sm">
                         <div class="row g-0">
                             <!-- Carrusel para las imágenes de cada noticia -->
-                            <div class="col-md-4">
+                            <div class="col-md-4 shadow-sm">
                                 <div id="carouselNoticia{{ forloop.counter }}" class="carousel slide" data-bs-ride="carousel">
                                     <div class="carousel-inner">
                                         {% for imagen in noticia.imagenes.all %}
@@ -63,15 +59,12 @@
            </table>
             </div>
                     </div>
-        </div>
-    </div>
-</div>
-    </div>
+
 
 <style>
 /* Estilo para la tabla que permitirá el scroll vertical */
 .table-responsive {
-  max-height: 400px; /* Establece la altura máxima de la tabla */
+  max-height: 480px; /* Establece la altura máxima de la tabla */
   overflow-y: auto;
 }
 
