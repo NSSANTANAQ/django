@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'accounts',
     'cliente',
     'administrador',
-    'rest_framework',
 ]
 
 MIDDLEWARE = [
