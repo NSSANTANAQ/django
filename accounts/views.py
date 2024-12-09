@@ -28,7 +28,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage, BadHeaderError
-import socket
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 
 def login_view(request):
@@ -377,3 +378,14 @@ def my_password_reset_confirm(request, uidb64, token):
 
 def password_reset_exito(request):
     return render(request,'password_reset_exito.html')
+
+
+@api_view(['POST'])
+def login(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        return Response({"message": "Inicio de sesión exitoso", "status": "success"})
+    else:
+        return Response({"message": "Usuario o contraseña incorrectos", "status": "error"})

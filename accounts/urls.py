@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+from .views import login
 
 urlpatterns = [
     path('login/', views.login_view, name='login'),
@@ -22,5 +22,6 @@ urlpatterns = [
     path('password_reset_exito/', views.password_reset_exito, name="password_reset_exito"),
     path('envio_exitoso_enlace_email/', views.envio_exitoso_enlace_email, name="envio_exitoso_enlace_email"),
 
+    path('api/login/', login, name='login'),
 
 ]
