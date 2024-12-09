@@ -28,10 +28,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage, BadHeaderError
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework import status
-from .serializers import LoginSerializer
 
 
 
