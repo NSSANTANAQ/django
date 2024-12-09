@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 
-ALLOWED_HOSTS = ['serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
+ALLOWED_HOSTS = ['127.0.0.1','serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
 
 # FORM SUBMISSION
 # Comment out the following line and place your railway URL, and your production URL in the array.
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'accounts',
     'cliente',
     'administrador',
+
 ]
 
 MIDDLEWARE = [
@@ -90,20 +91,20 @@ DATABASES = {
         'NAME': "railway",
         'USER': "postgres",
         'PASSWORD': "XWNyYyJwiuHcXmaHxkbAozJjHZKNqTeT",
-        # 'HOST': "autorack.proxy.rlwy.net",
-        # 'PORT': "15788",
-        'HOST': "postgres.railway.internal",
-        'PORT': "5432",
+        'HOST': "autorack.proxy.rlwy.net",
+        'PORT': "15788",
+        # 'HOST': "postgres.railway.internal",
+        # 'PORT': "5432",
     },
     'railway': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Ejemplo con PostgreSQL
         'NAME': 'railway',
         'USER': 'postgres',
         'PASSWORD': 'TzOSnbbVhSPuqzcHtDeDQxeFPtfuDCie',
-        # 'HOST': 'junction.proxy.rlwy.net',
-        # 'PORT': '29129',
-        'HOST': "meticulous-empathy.railway.internal",
-        'PORT': "5432",
+        'HOST': 'junction.proxy.rlwy.net',
+        'PORT': '29129',
+        # 'HOST': "meticulous-empathy.railway.internal",
+        # 'PORT': "5432",
         # 'OPTIONS': {
         #     'options': '-c search_path=administracion,auditoria,financiero,seguridad'
         # }
@@ -117,6 +118,7 @@ LOGIN_REDIRECT_URL = '/cliente/menu_usuarios/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 CSRF_TRUSTED_ORIGINS = [
+    'https://127.0.0.1',
     'https://serviciosenlinea.epmapas.gob.ec',
     'https://django-server-production-b121.up.railway.app',
 ]

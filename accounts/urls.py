@@ -22,6 +22,6 @@ urlpatterns = [
     path('password_reset_exito/', views.password_reset_exito, name="password_reset_exito"),
     path('envio_exitoso_enlace_email/', views.envio_exitoso_enlace_email, name="envio_exitoso_enlace_email"),
 
-    path('api/login/', login, name='login'),
+
 
 ]
