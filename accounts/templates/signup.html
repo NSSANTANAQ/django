@@ -1,0 +1,96 @@
+<!--&lt;!&ndash; accounts/templates/accounts/signup.html &ndash;&gt;-->
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Sign Up</title>-->
+<!--    {% load static %}-->
+<!--    <link rel="shortcut icon" type="img/png" href="{% static 'images/favicon.png' %}">-->
+<!--    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">-->
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
+<!--    <style>-->
+<!--         /* CSS personalizado para centrar todo el contenido */-->
+<!--        .toast-container {-->
+<!--            delay: 5000;-->
+<!--            position: fixed;-->
+<!--            top: 20px;-->
+<!--            right: 20px;-->
+<!--            z-index: 1050;-->
+<!--        }-->
+<!--        .main-container {-->
+<!--            height: 100vh; /* Hace que el contenedor tenga el 100% de la altura de la ventana */-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            justify-content: center; /* Centra verticalmente */-->
+<!--            align-items: center; /* Centra horizontalmente */-->
+<!--            text-align: center;-->
+<!--            background-color: #f8f9fa; /* Fondo del contenedor principal */-->
+<!--        }-->
+<!--        .login-section {-->
+<!--            width: 100%;-->
+<!--            max-width: 450px; /* Ancho máximo del contenedor de la imagen y formulario */-->
+<!--            padding: 20px;-->
+<!--            border: 1px solid #ccc;-->
+<!--            border-radius: 10px;-->
+<!--            background-color: #fff; /* Color de fondo del contenedor */-->
+<!--            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra del contenedor principal */-->
+<!--        }-->
+<!--        .login-section img {-->
+<!--            max-width: 100%; /* Asegura que la imagen no exceda el ancho del contenedor */-->
+<!--            height: auto; /* Mantiene la proporción de la imagen */-->
+<!--        }-->
+<!--        .login-form {-->
+<!--            margin-top: 20px;-->
+<!--            max-width: 100%; /* Asegura que el formulario no exceda el ancho del contenedor */-->
+<!--            padding: 15px;-->
+<!--            border-radius: 8px;-->
+<!--            background-color: #f9f9f9; /* Color de fondo del formulario */-->
+<!--            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera para el formulario */-->
+<!--        }-->
+<!--        .btn-custom {-->
+<!--            width: 100%; /* Botón ocupa todo el ancho del formulario */-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="main-container">-->
+<!--    <div class="login-section">-->
+<!--        <img src="{% static 'images/LOGOEPMAPAS.png' %}" alt="Logo" width="150" height="150">-->
+
+<!--        <h2 class="text-center">Sign Up</h2>-->
+
+<!--        <form method="POST" class="login-form">-->
+<!--            {% csrf_token %}-->
+
+<!--            <div class="form-floating m-3">-->
+<!--                {{ form.username }}-->
+<!--                <label for=""><i class="fa fa-user" aria-hidden="true"></i> Nombres y Apellidos</label>-->
+<!--            </div>-->
+<!--            <div class="form-floating m-3">-->
+<!--                {{ form.email }}-->
+<!--                <label for=""><i class="fa fa-envelope" aria-hidden="true"></i> Correo Electronico</label>-->
+<!--            </div>-->
+<!--            <div class="form-floating m-3">-->
+<!--                {{ form.password1 }}-->
+<!--                <label for=""><i class="fa fa-lock" aria-hidden="true"></i> Contraseña</label>-->
+<!--            </div>-->
+<!--            <div class="form-floating m-3">-->
+<!--                {{ form.password2 }}-->
+<!--                <label for=""><i class="fa fa-lock" aria-hidden="true"></i> Confirmar Contraseña</label>-->
+<!--            </div>-->
+
+<!--            <button type="submit" class="btn btn-success btn-custom">Registrarme</button>-->
+<!--        </form>-->
+
+<!--        <div class="text-center mt-3">-->
+<!--            <a href="{% url 'login' %}" class="btn btn-outline-secondary">Cancel</a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--</body>-->
+<!--<script>-->
+<!--    window.history.pushState({}, document.title, "/");-->
+<!--</script>-->
+<!--</html>-->

@@ -1,0 +1,166 @@
+{% extends 'menu_admin.html' %}
+
+{% block content %}
+
+    <div class="container">
+        <!-- Tarjeta para el formulario de noticia -->
+        <div class="card">
+            <div class="card-header">
+        <h5 class="card-title">
+            Crear Noticia
+        </h5>
+        <h6 class="card-subtitle text-muted">
+            Datos del Usuario:
+        </h6>
+    </div>
+            <form method="post" action="{% url 'admin_noticias' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ noticia_form.as_p }}
+                <button type="submit">Crear Noticia</button>
+            </form>
+        </div>
+
+        <!-- Tarjeta para la subida de imágenes -->
+        <div class="card">
+            <h3>Subir Imágenes</h3>
+            <form id="form-imagenes" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="imagenes">Seleccionar Imágenes</label>
+                    <input type="file" id="imagenes" name="imagenes" multiple>
+                </div>
+                <div id="vista-previa">
+                    <!-- Vista previa de las imágenes -->
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const inputImagenes = document.getElementById('imagenes');
+        const vistaPrevia = document.getElementById('vista-previa');
+
+        // Lista para almacenar archivos seleccionados
+        let archivosSeleccionados = [];
+
+        inputImagenes.addEventListener('change', function() {
+            Array.from(this.files).forEach((file) => {
+                archivosSeleccionados.push(file);
+            });
+
+            actualizarVistaPrevia();
+        });
+
+        function actualizarVistaPrevia() {
+            vistaPrevia.innerHTML = '';
+
+            archivosSeleccionados.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const container = document.createElement('div');
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = `Imagen ${index + 1}`;
+
+                    const botonEliminar = document.createElement('button');
+                    botonEliminar.textContent = 'Eliminar';
+                    botonEliminar.addEventListener('click', function() {
+                        archivosSeleccionados.splice(index, 1);
+                        actualizarVistaPrevia();
+                    });
+
+                    container.appendChild(img);
+                    container.appendChild(botonEliminar);
+
+                    vistaPrevia.appendChild(container);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+
+<style>
+
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            flex: 1;
+        }
+
+        .card h3 {
+            margin: 0 0 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #vista-previa {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        #vista-previa div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        #vista-previa img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        #vista-previa button {
+            margin-top: 10px;
+            background-color: #ff4d4d;
+        }
+    </style>
+{% endblock %}
