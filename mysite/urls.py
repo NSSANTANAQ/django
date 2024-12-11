@@ -27,6 +27,7 @@ urlpatterns = [
     path('cliente/', include('cliente.urls'), name="cliente"),  # Incluye las rutas de 'cliente'
     path('administrador/', include('administrador.urls'), name="administrador"),  # Incluye las rutas de 'administrador'
 
+    path('api/', include('apis.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'accounts',
     'cliente',
     'administrador',
+    'apis',
+    'rest_framework'
 
 ]
 
