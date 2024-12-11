@@ -17,25 +17,26 @@ class UserListCreateAPIView(APIView):
 @api_view(['POST'])
 def login_view(request):
     if request.method == 'POST':
+        # Obtener las credenciales enviadas
         username = request.data.get('username')
         password = request.data.get('password')
 
+        # Validar las credenciales
         user = authenticate(username=username, password=password)
 
         if user is not None:
-            token, created = Token.objects.get_or_create(user=user)
             return Response({
                 'success': True,
                 'message': 'Login exitoso',
-                'token': token.key
+
             })
         else:
             return Response({
                 'success': False,
                 'message': 'Usuario o contraseña incorrectos'
-            })
+            }, status=401)
     else:
         return Response({
             'success': False,
             'message': 'Método no permitido'
-        })
+        }, status=405)
