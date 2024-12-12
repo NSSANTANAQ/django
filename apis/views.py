@@ -14,20 +14,29 @@ class UserListCreateAPIView(APIView):
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
-@api_view(['GET'])
+@api_view(['POST'])
 def login_view(request):
-    username = request.query_params.get('username')  # Obtiene datos de la URL
-    password = request.query_params.get('password')
+    if request.method == 'POST':
+        # Obtener las credenciales enviadas
+        username = request.data.get('username')
+        password = request.data.get('password')
 
-    user = authenticate(username=username, password=password)
+        # Validar las credenciales
+        user = authenticate(username=username, password=password)
 
-    if user is not None:
-        return Response({
-            'success': True,
-            'message': 'Login exitoso'
-        })
+        if user is not None:
+            return Response({
+                'success': True,
+                'message': 'Login exitoso',
+
+            })
+        else:
+            return Response({
+                'success': False,
+                'message': 'Usuario o contraseña incorrectos'
+            }, status=401)
     else:
         return Response({
             'success': False,
-            'message': 'Usuario o contraseña incorrectos'
-        })
+            'message': 'Método no permitido'
+        }, status=405)
