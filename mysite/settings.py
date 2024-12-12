@@ -215,8 +215,8 @@ CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY', 'api_key_por_defecto')
 CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', 'api_secret_por_defecto')
 
 
-VAPID_PUBLIC_KEY = "BMrI6XUaOLp_m5xmE4vTGYvCBcMpZPvrzhFf0HMaGEmycCZ6Dcx8mzmZkc563GE7D28vo8oyTgBWupjRr6Mht5Q"
-VAPID_PRIVATE_KEY = "uKPy5ZdOSz5sF0yFqAxUyjZC5z4oZE83p7o3i4KNY1E"
+VAPID_PUBLIC_KEY = os.getenv('VAPID_PUBLIC_KEY')
+VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY')
 VAPID_CLAIMS = {
     "sub": "mailto: <nestor.santana@epmapas.gob.ec>"  # Cambia a tu correo
 }
