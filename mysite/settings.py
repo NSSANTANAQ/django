@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 
-ALLOWED_HOSTS = ['serviciosenlinea.epmapas.gob.ec''serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
+ALLOWED_HOSTS = ['serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
 
 # FORM SUBMISSION
 # Comment out the following line and place your railway URL, and your production URL in the array.
