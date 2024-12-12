@@ -41,7 +41,7 @@ def admin_noticias(request):
             return redirect('admin_noticias')  # Redirige a la vista de administración de noticias
     else:
         noticia_form = NoticiaForm()
-        result = Suscripcion.objects.all()
+        result = Noticia.objects.all()
     return render(request, 'admin_noticias.html', {
         'noticia_form': noticia_form,'result': result,
     })
