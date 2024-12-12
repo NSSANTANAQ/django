@@ -67,7 +67,7 @@ def enviar_notificacion(noticia):
     payload = {
         "title": noticia.titulo,
         "body": noticia.subtitulo,
-        "url": f"https://tu_sitio.com/noticia/{noticia.id}"  # Cambia a tu dominio real
+        "url": f"https://serviciosenlinea.epmapas.gob.ec/admin_noticias/{noticia.id}"  # Cambia a tu dominio real
     }
 
     # Enviar la notificación a cada suscripción
