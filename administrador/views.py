@@ -92,4 +92,4 @@ def enviar_notificacion(noticia):
 def probar_notificacion(request, noticia_id):
     noticia = get_object_or_404(Noticia, pk=noticia_id)
     resultados = enviar_notificacion(noticia)
-    return JsonResponse({"resultados": resultados})
+    return render(request, 'menu_admin.html',{"resultados": resultados})
