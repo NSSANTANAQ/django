@@ -88,3 +88,8 @@ def enviar_notificacion(noticia):
             print(f"Notificación enviada a: {suscripcion.endpoint}")
         except WebPushException as ex:
             print(f"Error enviando a {suscripcion.endpoint}: {str(ex)}")
+
+def probar_notificacion(request, noticia_id):
+    noticia = get_object_or_404(Noticia, pk=noticia_id)
+    resultados = enviar_notificacion(noticia)
+    return JsonResponse({"resultados": resultados})
