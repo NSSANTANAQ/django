@@ -1,6 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from .models import Suscripcion
 from .serializer import UserSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -40,3 +42,18 @@ def login_view(request):
             'success': False,
             'message': 'Método no permitido'
         }, status=405)
+
+class RegistrarSuscripcionView(APIView):
+    def post(self, request):
+        # Obtener datos de la suscripción desde la solicitud
+        data = request.data
+        endpoint = data.get('endpoint')
+        p256dh = data.get('keys', {}).get('p256dh')
+        auth = data.get('keys', {}).get('auth')
+
+        # Verificar que no exista ya esta suscripción
+        if not Suscripcion.objects.filter(endpoint=endpoint).exists():
+            # Registrar la suscripción
+            Suscripcion.objects.create(endpoint=endpoint, p256dh=p256dh, auth=auth)
+            return Response({'message': 'Suscripción registrada exitosamente'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'La suscripción ya existe'}, status=status.HTTP_200_OK)

@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 
-ALLOWED_HOSTS = ['serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
+ALLOWED_HOSTS = ['serviciosenlinea.epmapas.gob.ec''serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
 
 # FORM SUBMISSION
 # Comment out the following line and place your railway URL, and your production URL in the array.
@@ -213,4 +213,12 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME', 'cloud_name_por_defecto')
 CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY', 'api_key_por_defecto')
 CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', 'api_secret_por_defecto')
+
+
+VAPID_PUBLIC_KEY = "BMrI6XUaOLp_m5xmE4vTGYvCBcMpZPvrzhFf0HMaGEmycCZ6Dcx8mzmZkc563GE7D28vo8oyTgBWupjRr6Mht5Q"
+VAPID_PRIVATE_KEY = "uKPy5ZdOSz5sF0yFqAxUyjZC5z4oZE83p7o3i4KNY1E"
+VAPID_CLAIMS = {
+    "sub": "mailto: <nestor.santana@epmapas.gob.ec>"  # Cambia a tu correo
+}
+
 
