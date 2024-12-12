@@ -56,21 +56,19 @@ def subir_imagen(request, noticia_id):
     return JsonResponse({'error': 'Método no permitido.'}, status=405)
 
 
+
 def enviar_notificacion(noticia):
-    # Obtener todas las suscripciones
     suscripciones = Suscripcion.objects.all()
     if not suscripciones:
-        print("No hay suscripciones registradas")
-        return
+        return None
 
-    # Mensaje de notificación
     payload = {
         "title": noticia.titulo,
         "body": noticia.subtitulo,
-        "url": f"https://serviciosenlinea.epmapas.gob.ec/admin_noticias/{noticia.id}"  # Cambia a tu dominio real
+        "url": f"https://serviciosenlinea.epmapas.gob.ec/admin_noticias/{noticia.id}"
     }
 
-    # Enviar la notificación a cada suscripción
+    resultados = []
     for suscripcion in suscripciones:
         try:
             webpush(
@@ -82,13 +80,14 @@ def enviar_notificacion(noticia):
                     }
                 },
                 data=json.dumps(payload),
-                vapid_private_key=settings.VAPID_PRIVATE_KEY,
+                vapid_private_key=settings.VAPID_PRIVATE_KEY,  # Asegúrate de que esto se pasa
                 vapid_claims=settings.VAPID_CLAIMS
             )
-            print(f"Notificación enviada a: {suscripcion.endpoint}")
+            resultados.append(f"Notificación enviada a: {suscripcion.endpoint}")
         except WebPushException as ex:
-            print(f"Error enviando a {suscripcion.endpoint}: {str(ex)}")
+            resultados.append(f"Error enviando a {suscripcion.endpoint}: {str(ex)}")
 
+    return resultados
 def probar_notificacion(request, noticia_id):
     noticia = get_object_or_404(Noticia, pk=noticia_id)
     resultados = enviar_notificacion(noticia)
