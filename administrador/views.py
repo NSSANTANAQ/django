@@ -4,6 +4,15 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .forms import NoticiaForm
 from .models import Noticia, ImagenNoticia
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from apis.models import Suscripcion
+from .forms import NoticiaForm  # Asume que tienes un formulario para Noticia
+from django.conf import settings
+from pywebpush import webpush, WebPushException
+import json
+
+
 def es_admin(user):
     return user.is_authenticated and user.is_staff
 
@@ -27,6 +36,8 @@ def admin_noticias(request):
             for archivo in archivos:
                 ImagenNoticia.objects.create(noticia=noticia, imagen=archivo)
 
+            enviar_notificacion(noticia)
+
             return redirect('admin_noticias')  # Redirige a la vista de administración de noticias
     else:
         noticia_form = NoticiaForm()
@@ -43,3 +54,37 @@ def subir_imagen(request, noticia_id):
         return JsonResponse({'mensaje': 'Imagen subida correctamente.'}, status=201)
 
     return JsonResponse({'error': 'Método no permitido.'}, status=405)
+
+
+def enviar_notificacion(noticia):
+    # Obtener todas las suscripciones
+    suscripciones = Suscripcion.objects.all()
+    if not suscripciones:
+        print("No hay suscripciones registradas")
+        return
+
+    # Mensaje de notificación
+    payload = {
+        "title": noticia.titulo,
+        "body": noticia.subtitulo,
+        "url": f"https://tu_sitio.com/noticia/{noticia.id}"  # Cambia a tu dominio real
+    }
+
+    # Enviar la notificación a cada suscripción
+    for suscripcion in suscripciones:
+        try:
+            webpush(
+                subscription_info={
+                    "endpoint": suscripcion.endpoint,
+                    "keys": {
+                        "p256dh": suscripcion.p256dh,
+                        "auth": suscripcion.auth
+                    }
+                },
+                data=json.dumps(payload),
+                vapid_private_key=settings.VAPID_PRIVATE_KEY,
+                vapid_claims=settings.VAPID_CLAIMS
+            )
+            print(f"Notificación enviada a: {suscripcion.endpoint}")
+        except WebPushException as ex:
+            print(f"Error enviando a {suscripcion.endpoint}: {str(ex)}")
