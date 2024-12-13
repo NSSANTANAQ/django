@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 from django.contrib.messages import constants as messages
 from decouple import config
@@ -48,7 +49,8 @@ INSTALLED_APPS = [
     'cliente',
     'administrador',
     'apis',
-    'rest_framework'
+    'rest_framework',
+    'rest_framework_simplejwt',
 
 ]
 
@@ -220,5 +222,17 @@ VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY')
 VAPID_CLAIMS = {
     "sub": "mailto: <nestor.santana@epmapas.gob.ec>"  # Cambia a tu correo
 }
+# Configuración de JWT
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Tiempo de vigencia del token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Tiempo de vigencia del refresh token
+    'ROTATE_REFRESH_TOKENS': True,                   # Permitir rotación de tokens
+    'BLACKLIST_AFTER_ROTATION': True,                # Invalidar tokens antiguos
+}
 

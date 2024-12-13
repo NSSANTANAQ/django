@@ -57,17 +57,13 @@ def subir_imagen(request, noticia_id):
 
 
 
-def enviar_notificacion(noticia):
-    suscripciones = Suscripcion.objects.all()
-    if not suscripciones:
-        return None
-
+def enviar_notificacion(title, body, url):
     payload = {
-        "title": noticia.titulo,
-        "body": noticia.subtitulo,
-        "url": f"https://serviciosenlinea.epmapas.gob.ec/admin_noticias/{noticia.id}"
+        "title": title,
+        "body": body,
+        "url": url,
     }
-
+    suscripciones = Suscripcion.objects.all()
     resultados = []
     for suscripcion in suscripciones:
         try:
@@ -76,18 +72,18 @@ def enviar_notificacion(noticia):
                     "endpoint": suscripcion.endpoint,
                     "keys": {
                         "p256dh": suscripcion.p256dh,
-                        "auth": suscripcion.auth
-                    }
+                        "auth": suscripcion.auth,
+                    },
                 },
                 data=json.dumps(payload),
-                vapid_private_key=settings.VAPID_PRIVATE_KEY,  # Asegúrate de que esto se pasa
-                vapid_claims=settings.VAPID_CLAIMS
+                vapid_private_key=settings.VAPID_PRIVATE_KEY,
+                vapid_claims=settings.VAPID_CLAIMS,
             )
             resultados.append(f"Notificación enviada a: {suscripcion.endpoint}")
         except WebPushException as ex:
             resultados.append(f"Error enviando a {suscripcion.endpoint}: {str(ex)}")
-
     return resultados
+
 def probar_notificacion(request, noticia_id):
     noticia = get_object_or_404(Noticia, pk=noticia_id)
     resultados = enviar_notificacion(noticia)
