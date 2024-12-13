@@ -23,7 +23,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework_simplejwt.tokens import BlacklistMixin, RefreshToken
+import logging
 
+logger = logging.getLogger(__name__)
 class UserListCreateAPIView(APIView):
     def get(self, request):
         users = User.objects.all()
@@ -36,7 +38,7 @@ class LoginView(APIView):
         username = request.data.get('username')
         password = request.data.get('password')
 
-        print(f"Username: {username}, Password: {password}")  # Agregar print para ver los datos
+        logger.debug(f"Username: {username}, Password: {password}")  # Agregar print para ver los datos
 
         user = authenticate(username=username, password=password)
 
