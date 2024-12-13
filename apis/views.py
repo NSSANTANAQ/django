@@ -21,7 +21,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.authentication import TokenAuthentication
 
 class UserListCreateAPIView(APIView):
     def get(self, request):
@@ -30,31 +30,26 @@ class UserListCreateAPIView(APIView):
         return Response(serializer.data)
 
 @api_view(['POST'])
-def login_view(request):
-    if request.method == 'POST':
-        # Obtener las credenciales enviadas
+class LoginApiView(APIView):
+    def post(self, request, *args, **kwargs):
         username = request.data.get('username')
         password = request.data.get('password')
 
-        # Validar las credenciales
         user = authenticate(username=username, password=password)
-
         if user is not None:
-            return Response({
-                'success': True,
-                'message': 'Login exitoso',
-
-            })
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_200_OK)
         else:
-            return Response({
-                'success': False,
-                'message': 'Usuario o contraseña incorrectos'
-            }, status=401)
-    else:
-        return Response({
-            'success': False,
-            'message': 'Método no permitido'
-        }, status=405)
+            return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class ProtectedView(APIView):
+    authentication_classes = [TokenAuthentication]
+
+    def get(self, request, *args, **kwargs):
+        return Response({'message': 'Acceso permitido'}, status=status.HTTP_200_OK)
+
+
 
 class RegistrarSuscripcionView(APIView):
     def post(self, request):
