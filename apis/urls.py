@@ -5,7 +5,7 @@ from .views import revoke_token_view, UserListCreateAPIView,LoginApiView,Registr
 urlpatterns = [
     # Define tus endpoints aquí
     path('users/', UserListCreateAPIView.as_view(), name='user-list-create'),
-    path('login_api/', LoginApiView.as_view(), name='login_api'),
+    path('login_api/', LoginApiView, name='login_api'),
     path('registrar-suscripcion/', RegistrarSuscripcionView.as_view(), name='registrar_suscripcion'),
 
     path('token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
