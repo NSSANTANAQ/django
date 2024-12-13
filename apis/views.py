@@ -22,6 +22,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from rest_framework_simplejwt.tokens import BlacklistMixin, RefreshToken
 
 class UserListCreateAPIView(APIView):
     def get(self, request):
@@ -30,17 +31,27 @@ class UserListCreateAPIView(APIView):
         return Response(serializer.data)
 
 @api_view(['POST'])
-class LoginApiView(APIView):
+class LoginView(APIView):
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
         password = request.data.get('password')
 
         user = authenticate(username=username, password=password)
+
         if user is not None:
-            token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_200_OK)
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
+            # Check if token is blacklisted
+            if TokenBlacklist.objects.filter(token=access_token).exists():
+                return Response({'message': 'Token revoked or expired'}, status=status.HTTP_401_UNAUTHORIZED)
+
+            return Response({
+                'token': access_token,
+                'refresh': str(refresh),
+            }, status=status.HTTP_200_OK)
         else:
-            return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class ProtectedView(APIView):
@@ -79,7 +90,18 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 class CustomTokenRefreshView(TokenRefreshView):
     permission_classes = [permissions.AllowAny]
 
+class BlacklistTokenView(BlacklistMixin, APIView):
+    def post(self, request, *args, **kwargs):
+        token = request.data.get('token')
 
+        if token:
+            try:
+                TokenBlacklist.objects.create(token=token)
+                return Response({'message': 'Token revoked successfully.'}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': 'Token not provided.'}, status=status.HTTP_400_BAD_REQUEST)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def revoke_token_view(request):
