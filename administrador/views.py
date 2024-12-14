@@ -69,9 +69,9 @@ def send_push_notification(sender, instance, created, **kwargs):
                 "body": instance.subtitulo,
                 "url": "https://https://serviciosenlinea.epmapas.gob.ec/administrador/admin_noticias/" + str(instance.id),  # URL de la noticia
             }
-            send_notification(subscription, payload)
+            send_push_notification(subscription, payload)
 
-def send_notification(subscription, payload):
+def send_push_notification(subscription, payload):
     try:
         webpush(
             subscription_info={
@@ -82,14 +82,13 @@ def send_notification(subscription, payload):
                 },
             },
             data=json.dumps(payload),
-            vapid_private_key=os.getenv("VAPID_PRIVATE_KEY"),
+            vapid_private_key=settings.VAPID_PRIVATE_KEY,  # Carga desde settings.py
             vapid_claims={
-                "sub": os.getenv("VAPID_EMAIL"),
+                "sub": settings.VAPID_EMAIL,  # También desde settings.py
             },
         )
-        print("Notificación enviada con éxito")
     except WebPushException as ex:
-        print(f"Error enviando notificación: {ex}")
+        print(f"Error enviando notificación: {str(ex)}")
 
 
 def probar_notificacion(request, noticia_id):
