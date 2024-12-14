@@ -64,22 +64,19 @@ class ProtectedView(APIView):
 
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-@method_decorator(permission_classes([AllowAny]), name='dispatch')
-class RegistrarSuscripcionView(APIView):
-    def post(self, request):
-        # Obtener datos de la suscripción desde la solicitud
-        data = request.data
-        endpoint = data.get('endpoint')
-        p256dh = data.get('keys', {}).get('p256dh')
-        auth = data.get('keys', {}).get('auth')
+@csrf_exempt
+@api_view(['POST'])
+def RegistrarSuscripcion(request):
+    data = request.data
+    endpoint = data.get('endpoint')
+    p256dh = data.get('keys', {}).get('p256dh')
+    auth = data.get('keys', {}).get('auth')
 
-        # Verificar que no exista ya esta suscripción
-        if not Suscripcion.objects.filter(endpoint=endpoint).exists():
-            # Registrar la suscripción
-            Suscripcion.objects.create(endpoint=endpoint, p256dh=p256dh, auth=auth)
-            return Response({'message': 'Suscripción registrada exitosamente'}, status=status.HTTP_201_CREATED)
-        return Response({'message': 'La suscripción ya existe'}, status=status.HTTP_200_OK)
+    # Verificar que no exista ya esta suscripción
+    if not Suscripcion.objects.filter(endpoint=endpoint).exists():
+        Suscripcion.objects.create(endpoint=endpoint, p256dh=p256dh, auth=auth)
+        return Response({'message': 'Suscripción registrada exitosamente'}, status=status.HTTP_201_CREATED)
+    return Response({'message': 'La suscripción ya existe'}, status=status.HTTP_200_OK)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
