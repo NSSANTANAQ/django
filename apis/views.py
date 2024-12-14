@@ -71,9 +71,8 @@ class ProtectedView(APIView):
         return Response({'message': 'Acceso permitido'}, status=status.HTTP_200_OK)
 
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class RegisterSubscriptionView(View):
-    @method_decorator(csrf_exempt, name='dispatch')
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body)
