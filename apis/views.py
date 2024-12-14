@@ -84,8 +84,21 @@ class RegisterSubscriptionView(View):
             if not all([p256dh, auth, endpoint]):
                 return JsonResponse({'error': 'Faltan datos de suscripción.'}, status=400)
 
-            # Aquí puedes registrar las claves en la base de datos o realizar la lógica necesaria
-            return JsonResponse({'success': True, 'message': 'Suscripción registrada exitosamente.'})
+            # Guardar en la base de datos
+            subscription, created = Suscripcion.objects.update_or_create(
+                endpoint=endpoint,
+                defaults={
+                    'p256dh': p256dh,
+                    'auth_key': auth,
+                }
+            )
+
+            if created:
+                message = 'Suscripción registrada exitosamente.'
+            else:
+                message = 'Suscripción actualizada exitosamente.'
+
+            return JsonResponse({'success': True, 'message': message})
 
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Formato de datos inválido.'}, status=400)
