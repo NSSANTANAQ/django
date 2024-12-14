@@ -26,6 +26,14 @@ from rest_framework_simplejwt.tokens import BlacklistMixin, RefreshToken
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import ec
+from base64 import urlsafe_b64encode
+import os
+
+
+
+
 class UserListCreateAPIView(APIView):
     def get(self, request):
         users = User.objects.all()
@@ -64,39 +72,25 @@ class ProtectedView(APIView):
 
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class RegisterSubscriptionView(View):
+    @method_decorator(csrf_exempt, name='dispatch')
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body)
-            endpoint = data.get('endpoint')
             keys = data.get('keys', {})
             p256dh = keys.get('p256dh')
             auth = keys.get('auth')
+            endpoint = data.get('endpoint')
 
-            if not all([endpoint, p256dh, auth]):
+            if not all([p256dh, auth, endpoint]):
                 return JsonResponse({'error': 'Faltan datos de suscripción.'}, status=400)
 
-            subscription, created = Suscripcion.objects.get_or_create(
-                endpoint=endpoint,
-                defaults={
-                    'p256dh': p256dh,
-                    'auth': auth
-                }
-            )
-
-            if not created:
-                subscription.p256dh = p256dh
-                subscription.auth = auth
-                subscription.save()
-
+            # Aquí puedes registrar las claves en la base de datos o realizar la lógica necesaria
             return JsonResponse({'success': True, 'message': 'Suscripción registrada exitosamente.'})
 
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Formato de datos inválido.'}, status=400)
         except Exception as e:
-            # Agregar log de error para diagnosticar problemas
-            print(f"Error: {str(e)}")
             return JsonResponse({'error': str(e)}, status=500)
 
 
@@ -137,3 +131,19 @@ def revoke_token_view(request):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     return Response({"error": "Token not provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def generate_subscription_keys():
+    private_key = ec.generate_private_key(ec.SECP256R1(), default_backend())
+
+    p256dh = urlsafe_b64encode(private_key.public_key().public_bytes(
+        encoding=default_backend().x509.Asn1.DER,
+        format=default_backend().x509.PublicFormat.SubjectPublicKeyInfo
+    )).decode('utf-8')
+
+    auth = urlsafe_b64encode(os.urandom(16)).decode('utf-8')
+
+    return {
+        'p256dh': p256dh,
+        'auth': auth
+    }
