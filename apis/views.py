@@ -81,13 +81,13 @@ class RegisterSubscriptionView(View):
                 endpoint=endpoint,
                 defaults={
                     'p256dh': p256dh,
-                    'auth_key': auth
+                    'auth': auth
                 }
             )
 
             if not created:
                 subscription.p256dh = p256dh
-                subscription.auth_key = auth
+                subscription.auth = auth
                 subscription.save()
 
             return JsonResponse({'success': True, 'message': 'Suscripción registrada exitosamente.'})
