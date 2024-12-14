@@ -1,3 +1,5 @@
+import traceback
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -84,7 +86,6 @@ class RegisterSubscriptionView(View):
             if not all([p256dh, auth, endpoint]):
                 return JsonResponse({'error': 'Faltan datos de suscripción.'}, status=400)
 
-            # Guardar en la base de datos
             subscription, created = Suscripcion.objects.update_or_create(
                 endpoint=endpoint,
                 defaults={
@@ -103,7 +104,7 @@ class RegisterSubscriptionView(View):
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Formato de datos inválido.'}, status=400)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'error': 'Internal Server Error', 'details': str(e), 'traceback': traceback.format_exc()}, status=500)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
