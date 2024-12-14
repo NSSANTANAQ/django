@@ -1,5 +1,5 @@
-import traceback
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -25,16 +25,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework_simplejwt.tokens import BlacklistMixin, RefreshToken
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.views import View
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import ec
-from base64 import urlsafe_b64encode
-import os
-
-
-
 
 class UserListCreateAPIView(APIView):
     def get(self, request):
@@ -74,37 +64,20 @@ class ProtectedView(APIView):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class RegisterSubscriptionView(View):
-    def post(self, request, *args, **kwargs):
-        try:
-            data = json.loads(request.body)
-            keys = data.get('keys', {})
-            p256dh = keys.get('p256dh')
-            auth = keys.get('auth')
-            endpoint = data.get('endpoint')
+class RegistrarSuscripcionView(APIView):
+    def post(self, request):
+        # Obtener datos de la suscripción desde la solicitud
+        data = request.data
+        endpoint = data.get('endpoint')
+        p256dh = data.get('keys', {}).get('p256dh')
+        auth = data.get('keys', {}).get('auth')
 
-            if not all([p256dh, auth, endpoint]):
-                return JsonResponse({'error': 'Faltan datos de suscripción.'}, status=400)
-
-            subscription, created = Suscripcion.objects.update_or_create(
-                endpoint=endpoint,
-                defaults={
-                    'p256dh': p256dh,
-                    'auth_key': auth,
-                }
-            )
-
-            if created:
-                message = 'Suscripción registrada exitosamente.'
-            else:
-                message = 'Suscripción actualizada exitosamente.'
-
-            return JsonResponse({'success': True, 'message': message})
-
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Formato de datos inválido.'}, status=400)
-        except Exception as e:
-            return JsonResponse({'error': 'Internal Server Error', 'details': str(e), 'traceback': traceback.format_exc()}, status=500)
+        # Verificar que no exista ya esta suscripción
+        if not Suscripcion.objects.filter(endpoint=endpoint).exists():
+            # Registrar la suscripción
+            Suscripcion.objects.create(endpoint=endpoint, p256dh=p256dh, auth=auth)
+            return Response({'message': 'Suscripción registrada exitosamente'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'La suscripción ya existe'}, status=status.HTTP_200_OK)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -144,19 +117,3 @@ def revoke_token_view(request):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     return Response({"error": "Token not provided"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-def generate_subscription_keys():
-    private_key = ec.generate_private_key(ec.SECP256R1(), default_backend())
-
-    p256dh = urlsafe_b64encode(private_key.public_key().public_bytes(
-        encoding=default_backend().x509.Asn1.DER,
-        format=default_backend().x509.PublicFormat.SubjectPublicKeyInfo
-    )).decode('utf-8')
-
-    auth = urlsafe_b64encode(os.urandom(16)).decode('utf-8')
-
-    return {
-        'p256dh': p256dh,
-        'auth': auth
-    }
