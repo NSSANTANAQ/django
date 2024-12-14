@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
@@ -67,25 +69,27 @@ def send_push_notification(sender, instance, created, **kwargs):
                 "body": instance.subtitulo,
                 "url": "https://https://serviciosenlinea.epmapas.gob.ec/administrador/admin_noticias/" + str(instance.id),  # URL de la noticia
             }
-            send_notification_to_client(subscription, payload)
+            send_notification(subscription, payload)
 
-def send_notification_to_client(subscription, payload):
-    headers = {
-        "Content-Type": "application/json",
-    }
-    data = {
-        "endpoint": subscription.endpoint,
-        "keys": {
-            "p256dh": subscription.p256dh,
-            "auth": subscription.auth,
-        },
-        "payload": payload,
-    }
+def send_notification(subscription, payload):
     try:
-        response = requests.post("https://fcm.googleapis.com/fcm/send", json=data, headers=headers)
-        response.raise_for_status()
-    except requests.RequestException as e:
-        print(f"Error enviando notificación: {e}")
+        webpush(
+            subscription_info={
+                "endpoint": subscription.endpoint,
+                "keys": {
+                    "p256dh": subscription.p256dh,
+                    "auth": subscription.auth,
+                },
+            },
+            data=json.dumps(payload),
+            vapid_private_key=os.getenv("VAPID_PRIVATE_KEY"),
+            vapid_claims={
+                "sub": os.getenv("VAPID_EMAIL"),
+            },
+        )
+        print("Notificación enviada con éxito")
+    except WebPushException as ex:
+        print(f"Error enviando notificación: {ex}")
 
 
 def probar_notificacion(request, noticia_id):
