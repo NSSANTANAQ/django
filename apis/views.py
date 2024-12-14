@@ -22,7 +22,7 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework_simplejwt.tokens import BlacklistMixin, RefreshToken
 
@@ -63,7 +63,9 @@ class ProtectedView(APIView):
         return Response({'message': 'Acceso permitido'}, status=status.HTTP_200_OK)
 
 
+
 @method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(permission_classes([AllowAny]), name='dispatch')
 class RegistrarSuscripcionView(APIView):
     def post(self, request):
         # Obtener datos de la suscripción desde la solicitud
