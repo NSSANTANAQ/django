@@ -11,8 +11,9 @@ from .forms import NoticiaForm  # Asume que tienes un formulario para Noticia
 from django.conf import settings
 from pywebpush import webpush, WebPushException
 import json
-
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import requests
 def es_admin(user):
     return user.is_authenticated and user.is_staff
 
@@ -36,7 +37,6 @@ def admin_noticias(request):
             for archivo in archivos:
                 ImagenNoticia.objects.create(noticia=noticia, imagen=archivo)
 
-            enviar_notificacion(noticia)
 
             return redirect('admin_noticias')  # Redirige a la vista de administración de noticias
     else:
@@ -57,34 +57,38 @@ def subir_imagen(request, noticia_id):
 
 
 
-def enviar_notificacion(title, body, url):
-    payload = {
-        "title": title,
-        "body": body,
-        "url": url,
+@receiver(post_save, sender=Noticia)
+def send_push_notification(sender, instance, created, **kwargs):
+    if created:  # Solo cuando la noticia es creada
+        subscriptions = Suscripcion.objects.all()
+        for subscription in subscriptions:
+            payload = {
+                "title": instance.titulo,
+                "body": instance.subtitulo,
+                "url": "https://https://serviciosenlinea.epmapas.gob.ec/administrador/admin_noticias/" + str(instance.id),  # URL de la noticia
+            }
+            send_notification_to_client(subscription, payload)
+
+def send_notification_to_client(subscription, payload):
+    headers = {
+        "Content-Type": "application/json",
     }
-    suscripciones = Suscripcion.objects.all()
-    resultados = []
-    for suscripcion in suscripciones:
-        try:
-            webpush(
-                subscription_info={
-                    "endpoint": suscripcion.endpoint,
-                    "keys": {
-                        "p256dh": suscripcion.p256dh,
-                        "auth": suscripcion.auth,
-                    },
-                },
-                data=json.dumps(payload),
-                vapid_private_key=settings.VAPID_PRIVATE_KEY,
-                vapid_claims=settings.VAPID_CLAIMS,
-            )
-            resultados.append(f"Notificación enviada a: {suscripcion.endpoint}")
-        except WebPushException as ex:
-            resultados.append(f"Error enviando a {suscripcion.endpoint}: {str(ex)}")
-    return resultados
+    data = {
+        "endpoint": subscription.endpoint,
+        "keys": {
+            "p256dh": subscription.p256dh,
+            "auth": subscription.auth,
+        },
+        "payload": payload,
+    }
+    try:
+        response = requests.post("https://fcm.googleapis.com/fcm/send", json=data, headers=headers)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        print(f"Error enviando notificación: {e}")
+
 
 def probar_notificacion(request, noticia_id):
     noticia = get_object_or_404(Noticia, pk=noticia_id)
-    resultados = enviar_notificacion(noticia)
+    resultados = send_push_notification(noticia)
     return JsonResponse({"resultados": resultados})
