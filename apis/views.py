@@ -81,13 +81,13 @@ class RegisterSubscriptionView(View):
                 endpoint=endpoint,
                 defaults={
                     'p256dh': p256dh,
-                    'auth': auth
+                    'auth_key': auth
                 }
             )
 
             if not created:
                 subscription.p256dh = p256dh
-                subscription.auth = auth
+                subscription.auth_key = auth
                 subscription.save()
 
             return JsonResponse({'success': True, 'message': 'Suscripción registrada exitosamente.'})
@@ -95,6 +95,8 @@ class RegisterSubscriptionView(View):
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Formato de datos inválido.'}, status=400)
         except Exception as e:
+            # Agregar log de error para diagnosticar problemas
+            print(f"Error: {str(e)}")
             return JsonResponse({'error': str(e)}, status=500)
 
 
