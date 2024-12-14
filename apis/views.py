@@ -23,7 +23,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework_simplejwt.tokens import BlacklistMixin, RefreshToken
-
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.views import View
 class UserListCreateAPIView(APIView):
     def get(self, request):
         users = User.objects.all()
@@ -62,20 +64,35 @@ class ProtectedView(APIView):
 
 
 
-class RegistrarSuscripcionView(APIView):
-    def post(self, request):
-        # Obtener datos de la suscripción desde la solicitud
-        data = request.data
-        endpoint = data.get('endpoint')
-        p256dh = data.get('keys', {}).get('p256dh')
-        auth = data.get('keys', {}).get('auth')
+@method_decorator(csrf_exempt, name='dispatch')
+class RegisterSubscriptionView(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            endpoint = data.get('endpoint')
+            keys = data.get('keys', {})
+            p256dh = keys.get('p256dh')
+            auth = keys.get('auth')
 
-        # Verificar que no exista ya esta suscripción
-        if not Suscripcion.objects.filter(endpoint=endpoint).exists():
-            # Registrar la suscripción
-            Suscripcion.objects.create(endpoint=endpoint, p256dh=p256dh, auth=auth)
-            return Response({'message': 'Suscripción registrada exitosamente'}, status=status.HTTP_201_CREATED)
-        return Response({'message': 'La suscripción ya existe'}, status=status.HTTP_200_OK)
+            if not all([endpoint, p256dh, auth]):
+                return JsonResponse({'error': 'Faltan datos de suscripción.'}, status=400)
+
+            # Guardar la suscripción en la base de datos
+            subscription, created = Suscripcion.objects.get_or_create(
+                endpoint=endpoint,
+                defaults={'p256dh': p256dh, 'auth_key': auth},
+            )
+
+            if not created:
+                # Actualizar claves si la suscripción ya existe
+                subscription.p256dh = p256dh
+                subscription.auth_key = auth
+                subscription.save()
+
+            return JsonResponse({'success': True, 'message': 'Suscripción registrada exitosamente.'})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
