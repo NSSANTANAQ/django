@@ -77,19 +77,17 @@ class RegisterSubscriptionView(View):
             if not all([endpoint, p256dh, auth]):
                 return JsonResponse({'error': 'Faltan datos de suscripción.'}, status=400)
 
-            user = request.user if request.user.is_authenticated else None
-
             subscription, created = Suscripcion.objects.get_or_create(
                 endpoint=endpoint,
                 defaults={
                     'p256dh': p256dh,
-                    'auth_key': auth
+                    'auth': auth
                 }
             )
 
             if not created:
                 subscription.p256dh = p256dh
-                subscription.auth_key = auth
+                subscription.auth = auth
                 subscription.save()
 
             return JsonResponse({'success': True, 'message': 'Suscripción registrada exitosamente.'})
