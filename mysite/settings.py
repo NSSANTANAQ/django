@@ -218,7 +218,7 @@ CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', 'api_secret_por_defec
 
 
 VAPID_PUBLIC_KEY = os.getenv('VAPID_PUBLIC_KEY', 'default_public_key')
-VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', 'default_private_key')
+VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', 'MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg5S0VPwrTvZY2+v2i8gJvshZM1ZWS0ECreh7R5BT7WTOhRANCAAQoQSUzuyllnsPVOcKdj6HYnq8FSwVQNAZLZrcuWO4035dQqs1d+ObYuAh4gqAO2x8E8rYN6sBp2ABVtwpwQ4zG')
 VAPID_EMAIL = os.getenv('VAPID_EMAIL', 'nestor.santana@epmapas.gob.ec')
 
 # Configuración de JWT
