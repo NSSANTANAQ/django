@@ -92,7 +92,9 @@ def send_push_notification(subscription, payload):
             },
             data=json.dumps(payload),  # Convertimos a JSON
             vapid_private_key=settings.VAPID_PRIVATE_KEY,
-            vapid_claims={"sub": settings.VAPID_EMAIL},
+            vapid_claims={
+                "sub": "nestor.santana@epmapas.gob.ec",  # Correo directamente aquí
+            },
         )
     except WebPushException as ex:
         print(f"Error enviando notificación: {str(ex)}")
