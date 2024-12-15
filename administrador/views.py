@@ -60,7 +60,7 @@ def subir_imagen(request, noticia_id):
 
 
 @receiver(post_save, sender=Noticia)
-def send_push_notification(sender, instance, created, **kwargs):
+def send_push_notification_1(sender, instance, created, **kwargs):
     if created:  # Solo cuando la noticia es creada
         subscriptions = Suscripcion.objects.all()
         for subscription in subscriptions:
@@ -93,5 +93,5 @@ def send_push_notification(subscription, payload):
 
 def probar_notificacion(request, noticia_id):
     noticia = get_object_or_404(Noticia, pk=noticia_id)
-    resultados = send_push_notification(noticia)
+    resultados = send_push_notification_1(noticia)
     return JsonResponse({"resultados": resultados})
