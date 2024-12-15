@@ -84,7 +84,7 @@ def send_push_notification(subscription, payload):
             data=json.dumps(payload),
             vapid_private_key=settings.VAPID_PRIVATE_KEY,  # Carga desde settings.py
             vapid_claims={
-                "sub": settings.VAPID_EMAIL,  # También desde settings.py
+                "sub": settings.VAPID_CLAIMS,  # También desde settings.py
             },
         )
     except WebPushException as ex:
