@@ -31,7 +31,6 @@ def admin_noticias(request):
         noticia_form = NoticiaForm(request.POST, request.FILES)
 
         if noticia_form.is_valid():
-            # Guardar la noticia
             noticia = noticia_form.save()
 
             archivos = request.FILES.getlist('imagenes')
@@ -39,6 +38,15 @@ def admin_noticias(request):
             for archivo in archivos:
                 ImagenNoticia.objects.create(noticia=noticia, imagen=archivo)
 
+            # Envío de notificación push
+            payload = {
+                "title": noticia.titulo,
+                "body": noticia.subtitulo,
+                "url": f"https://serviciosenlinea.epmapas.gob.ec/administrador/admin_noticias/{noticia.id}",
+            }
+            subscriptions = Suscripcion.objects.all()
+            for subscription in subscriptions:
+                send_push_notification(subscription, json.dumps(payload))
 
             return redirect('admin_noticias')  # Redirige a la vista de administración de noticias
     else:
@@ -59,20 +67,21 @@ def subir_imagen(request, noticia_id):
 
 
 
-@receiver(post_save, sender=Noticia)
-def send_push_notification_1(sender, instance, created, **kwargs):
-    if created:  # Solo cuando la noticia es creada
-        subscriptions = Suscripcion.objects.all()
-        for subscription in subscriptions:
-            payload = {
-                "title": instance.titulo,
-                "body": instance.subtitulo,
-                "url": "https://https://serviciosenlinea.epmapas.gob.ec/administrador/admin_noticias/" + str(instance.id),  # URL de la noticia
-            }
-            send_push_notification(subscription, payload)
+# @receiver(post_save, sender=Noticia)
+# def send_push_notification_1(sender, instance, created, **kwargs):
+#     if created:  # Solo cuando la noticia es creada
+#         subscriptions = Suscripcion.objects.all()
+#         for subscription in subscriptions:
+#             payload = {
+#                 "title": instance.titulo,
+#                 "body": instance.subtitulo,
+#                 "url": "https://https://serviciosenlinea.epmapas.gob.ec/administrador/admin_noticias/" + str(instance.id),  # URL de la noticia
+#             }
+#             send_push_notification(subscription, payload)
 
 def send_push_notification(subscription, payload):
     try:
+        print("Sending notification with payload:", payload)  # Verificar el contenido del payload
         webpush(
             subscription_info={
                 "endpoint": subscription.endpoint,
@@ -81,11 +90,9 @@ def send_push_notification(subscription, payload):
                     "auth": subscription.auth,
                 },
             },
-            data=json.dumps(payload),
-            vapid_private_key="uKPy5ZdOSz5sF0yFqAxUyjZC5z4oZE83p7o3i4KNY1E",  # Carga desde settings.py
-            vapid_claims={
-                "sub": settings.VAPID_CLAIMS,  # También desde settings.py
-            },
+            data=json.dumps(payload),  # Convertimos a JSON
+            vapid_private_key=settings.VAPID_PRIVATE_KEY,
+            vapid_claims={"sub": settings.VAPID_EMAIL},
         )
     except WebPushException as ex:
         print(f"Error enviando notificación: {str(ex)}")
@@ -93,5 +100,5 @@ def send_push_notification(subscription, payload):
 
 def probar_notificacion(request, noticia_id):
     noticia = get_object_or_404(Noticia, pk=noticia_id)
-    resultados = send_push_notification_1(noticia)
+    resultados = send_push_notification(noticia)
     return JsonResponse({"resultados": resultados})
