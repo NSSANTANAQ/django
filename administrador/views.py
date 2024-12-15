@@ -91,10 +91,7 @@ def send_push_notification(subscription, payload):
         print(f"Error enviando notificación: {str(ex)}")
 
 
-def prueba_notificacion(id):
-    suscripciones = Suscripcion.objects.all()
-    for suscripcion in suscripciones:
-        send_push_notification(
-            suscripcion,
-            payload={"title": "Prueba", "body": "Esto es un mensaje de prueba"}
-        )
+def probar_notificacion(request, noticia_id):
+    noticia = get_object_or_404(Noticia, pk=noticia_id)
+    resultados = send_push_notification(noticia)
+    return JsonResponse({"resultados": resultados})
