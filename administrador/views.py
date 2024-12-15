@@ -91,7 +91,7 @@ def send_push_notification(subscription, payload):
         print(f"Error enviando notificación: {str(ex)}")
 
 
-def prueba_notificacion():
+def prueba_notificacion(id):
     suscripciones = Suscripcion.objects.all()
     for suscripcion in suscripciones:
         send_push_notification(
