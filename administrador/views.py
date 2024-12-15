@@ -91,7 +91,7 @@ def send_push_notification(subscription, payload):
                 },
             },
             data=json.dumps(payload),  # Convertimos a JSON
-            vapid_private_key=settings.VAPID_PRIVATE_KEY,
+            vapid_private_key="uKPy5ZdOSz5sF0yFqAxUyjZC5z4oZE83p7o3i4KNY1E",
             vapid_claims={"sub": settings.VAPID_CLAIMS},
         )
     except WebPushException as ex:
