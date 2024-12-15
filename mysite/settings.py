@@ -217,11 +217,10 @@ CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY', 'api_key_por_defecto')
 CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', 'api_secret_por_defecto')
 
 
-VAPID_PUBLIC_KEY = os.getenv('VAPID_PUBLIC_KEY')
-VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY')
-VAPID_CLAIMS = {
-    "sub": "mailto: <nestor.santana@epmapas.gob.ec>"  # Cambia a tu correo
-}
+VAPID_PUBLIC_KEY = os.getenv('VAPID_PUBLIC_KEY', 'default_public_key')
+VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', 'default_private_key')
+VAPID_EMAIL = os.getenv('VAPID_EMAIL', 'nestor.santana@epmapas.gob.ec')
+
 # Configuración de JWT
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
