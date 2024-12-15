@@ -82,7 +82,7 @@ def send_push_notification(subscription, payload):
                 },
             },
             data=json.dumps(payload),
-            vapid_private_key=settings.VAPID_PRIVATE_KEY,  # Carga desde settings.py
+            vapid_private_key="uKPy5ZdOSz5sF0yFqAxUyjZC5z4oZE83p7o3i4KNY1E",  # Carga desde settings.py
             vapid_claims={
                 "sub": settings.VAPID_CLAIMS,  # También desde settings.py
             },
