@@ -46,9 +46,7 @@
             <td>{{ noticia.id }}</td>
             <td>{{ noticia.titulo }}</td>
             <td>
-                <form method="get" action="{% url 'probar_notificacion' %}">
-                    <button type="submit">Probar Notificación</button>
-                </form>
+                <a href="{% url 'probar_notificacion' %}"> Probar</a>
             </td>
         </tr>
         {% endfor %}
