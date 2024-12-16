@@ -13,14 +13,17 @@ function urlBase64ToUint8Array(base64String) {
     return outputArray;
 }
 
+// Evento de instalación
 self.addEventListener('install', function(event) {
     event.waitUntil(self.skipWaiting());
 });
 
+// Evento de activación
 self.addEventListener('activate', function(event) {
     event.waitUntil(self.clients.claim());
 });
 
+// Evento pushsubscriptionchange
 self.addEventListener('pushsubscriptionchange', function(event) {
     event.waitUntil(
         self.registration.pushManager.subscribe({
@@ -37,11 +40,14 @@ self.addEventListener('pushsubscriptionchange', function(event) {
                     endpoint: uniqueEndpoint,
                     keys: newSubscription.toJSON().keys
                 })
+            }).catch(error => {
+                console.error('Error al registrar la suscripción:', error);
             });
         })
     );
 });
 
+// Evento push
 self.addEventListener('push', function(event) {
     const data = event.data ? event.data.text() : 'No data';
     const title = 'Nueva Notificación Push';
