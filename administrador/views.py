@@ -16,6 +16,8 @@ import json
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import requests
+from django.contrib import messages
+from threading import Thread
 def es_admin(user):
     return user.is_authenticated and user.is_staff
 
@@ -25,6 +27,9 @@ def menu_admin(request):
     # Lógica del menú de administrador
     return render(request, 'menu_admin.html')
 
+def enviar_notificaciones_async(subscriptions, payload):
+    for subscription in subscriptions:
+        send_push_notification(subscription, payload)
 
 def admin_noticias(request):
     if request.method == 'POST':
@@ -34,26 +39,27 @@ def admin_noticias(request):
             noticia = noticia_form.save()
 
             archivos = request.FILES.getlist('imagenes')
-
             for archivo in archivos:
                 ImagenNoticia.objects.create(noticia=noticia, imagen=archivo)
 
-            # Envío de notificación push
+            # Envío de notificaciones push
             payload = {
                 "title": noticia.titulo,
                 "body": noticia.subtitulo,
                 "url": f"https://serviciosenlinea.epmapas.gob.ec/administrador/admin_noticias/{noticia.id}",
             }
             subscriptions = Suscripcion.objects.all()
-            for subscription in subscriptions:
-                send_push_notification(subscription, json.dumps(payload))
+            Thread(target=enviar_notificaciones_async, args=(subscriptions, payload)).start()
 
-            return redirect('admin_noticias')  # Redirige a la vista de administración de noticias
+            messages.success(request, "Noticia creada y notificaciones enviadas correctamente.")
+            return redirect('admin_noticias')
     else:
         noticia_form = NoticiaForm()
         result = Noticia.objects.all()
+
     return render(request, 'admin_noticias.html', {
-        'noticia_form': noticia_form,'result': result,
+        'noticia_form': noticia_form,
+        'result': result,
     })
 
 def subir_imagen(request, noticia_id):
@@ -65,19 +71,6 @@ def subir_imagen(request, noticia_id):
 
     return JsonResponse({'error': 'Método no permitido.'}, status=405)
 
-
-
-# @receiver(post_save, sender=Noticia)
-# def send_push_notification_1(sender, instance, created, **kwargs):
-#     if created:  # Solo cuando la noticia es creada
-#         subscriptions = Suscripcion.objects.all()
-#         for subscription in subscriptions:
-#             payload = {
-#                 "title": instance.titulo,
-#                 "body": instance.subtitulo,
-#                 "url": "https://https://serviciosenlinea.epmapas.gob.ec/administrador/admin_noticias/" + str(instance.id),  # URL de la noticia
-#             }
-#             send_push_notification(subscription, payload)
 
 def send_push_notification(subscription, payload):
     try:
