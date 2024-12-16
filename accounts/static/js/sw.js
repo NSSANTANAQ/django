@@ -25,7 +25,7 @@ self.addEventListener('pushsubscriptionchange', function(event) {
     event.waitUntil(
         self.registration.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array('BMrI6XUaOLp_m5xmE4vTGYvCBcMpZPvrzhFf0HMaGEmycCZ6Dcx8mzmZkc563GE7D28vo8oyTgBWupjRr6Mht5Q')
+            applicationServerKey: urlBase64ToUint8Array('MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEKEElM7spZZ7D1TnCnY+h2J6vBUsFUDQGS2a3LljuNN+XUKrNXfjm2LgIeIKgDtsfBPK2DerAadgAVbcKcEOMxg==')
         }).then(function(newSubscription) {
             const uniqueEndpoint = `https://serviciosenlinea.epmapas.gob.ec/api/register-subscription/${btoa(JSON.stringify(newSubscription))}/`;
             return fetch('/api/register-subscription/', {
