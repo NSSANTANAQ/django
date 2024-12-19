@@ -94,7 +94,7 @@ class CustomTokenRefreshView(TokenRefreshView):
 
 
 
-
+@api_view(['POST'])
 def register_token(request):
     if request.method == 'POST':
         token = request.POST.get('token')
