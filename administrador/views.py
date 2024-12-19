@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from firebase_admin import messaging
+
 from .forms import NoticiaForm
 from .models import Noticia, ImagenNoticia
 from django.shortcuts import render, redirect
@@ -28,8 +30,23 @@ def menu_admin(request):
     return render(request, 'menu_admin.html')
 
 def enviar_notificaciones_async(subscriptions, payload):
-    for subscription in subscriptions:
-        send_push_notification(subscription, payload)
+    tokens = [suscripcion.token for suscripcion in subscriptions if suscripcion.token]
+
+    if not tokens:
+        print("No hay tokens registrados para enviar notificaciones.")
+        return
+
+    message = messaging.MulticastMessage(
+        notification=messaging.Notification(
+            title=payload.get("title"),
+            body=payload.get("body"),
+        ),
+        tokens=tokens,
+        data={"url": payload.get("url")},  # Información adicional opcional
+    )
+
+    response = messaging.send_multicast(message)
+    print(f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}")
 
 def admin_noticias(request):
     if request.method == 'POST':
@@ -72,26 +89,8 @@ def subir_imagen(request, noticia_id):
     return JsonResponse({'error': 'Método no permitido.'}, status=405)
 
 
-def send_push_notification(subscription, payload):
-    try:
-        print("Sending notification with payload:", payload)  # Verificar el contenido del payload
-        webpush(
-            subscription_info={
-                "endpoint": subscription.endpoint,
-                "keys": {
-                    "p256dh": subscription.p256dh,
-                    "auth": subscription.auth,
-                },
-            },
-            data=json.dumps(payload),  # Convertimos a JSON
-            vapid_private_key=settings.VAPID_PRIVATE_KEY,
-            vapid_claims={"sub": settings.VAPID_EMAIL},
-        )
-    except WebPushException as ex:
-        print(f"Error enviando notificación: {str(ex)}")
-
 
 def probar_notificacion(request, noticia_id):
     noticia = get_object_or_404(Noticia, pk=noticia_id)
-    resultados = send_push_notification(noticia)
+    resultados = noticia
     return JsonResponse({"resultados": resultados})

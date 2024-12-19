@@ -1,5 +1,6 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from firebase_admin import messaging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -91,18 +92,23 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 class CustomTokenRefreshView(TokenRefreshView):
     permission_classes = [permissions.AllowAny]
 
-class BlacklistTokenView(BlacklistMixin, APIView):
-    def post(self, request, *args, **kwargs):
-        token = request.data.get('token')
+
+
+
+def register_token(request):
+    if request.method == 'POST':
+        token = request.POST.get('token')
+        user = request.user if request.user.is_authenticated else None
 
         if token:
-            try:
-                TokenBlacklist.objects.create(token=token)
-                return Response({'message': 'Token revoked successfully.'}, status=status.HTTP_200_OK)
-            except Exception as e:
-                return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({'message': 'Token not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+            TokenBlacklist.objects.update_or_create(token=token, defaults={'user': user})
+            return JsonResponse({'success': True, 'message': 'Token registered'})
+        return JsonResponse({'success': False, 'message': 'Token missing'})
+
+
+
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def revoke_token_view(request):
@@ -116,3 +122,23 @@ def revoke_token_view(request):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     return Response({"error": "Token not provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def enviar_notificaciones_async(subscriptions, payload):
+    tokens = [suscripcion.token for suscripcion in subscriptions if suscripcion.token]
+
+    if not tokens:
+        print("No hay tokens registrados para enviar notificaciones.")
+        return
+
+    message = messaging.MulticastMessage(
+        notification=messaging.Notification(
+            title=payload.get("title"),
+            body=payload.get("body"),
+        ),
+        tokens=tokens,
+        data={"url": payload.get("url")},  # Información adicional opcional
+    )
+
+    response = messaging.send_multicast(message)
+    print(f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}")
