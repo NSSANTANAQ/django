@@ -108,7 +108,6 @@ def register_token(request):
 
 
 
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def revoke_token_view(request):
