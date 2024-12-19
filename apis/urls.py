@@ -8,7 +8,8 @@ urlpatterns = [
     path('login_api/', LoginView, name='login_api'),
     path('register-subscription/', views.RegistrarSuscripcion, name='register_subscription'),
 
+    path('token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
     path('revoke-token/', revoke_token_view, name='revoke_token'),
-    path('token/', views.register_token, name='token'),
+    path('save-token/', views.register_token, name='save_token'),
 ]
