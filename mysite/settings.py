@@ -242,7 +242,7 @@ SIMPLE_JWT = {
 
 import os
 from firebase_admin import credentials, initialize_app
-
+print("FIREBASE_PRIVATE_KEY:", os.getenv("FIREBASE_PRIVATE_KEY"))
 # Configurar credenciales desde variables de entorno
 cred = credentials.Certificate({
     "type": os.getenv("FIREBASE_TYPE"),
