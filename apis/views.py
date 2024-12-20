@@ -80,13 +80,37 @@ def RegistrarSuscripcion(request):
     return Response({'message': 'La suscripción ya existe'}, status=status.HTTP_200_OK)
 
 
+# class CustomTokenObtainPairView(TokenObtainPairView):
+#     permission_classes = [permissions.AllowAny]
+#
+#     def post(self, request, *args, **kwargs):
+#         response = super().post(request, *args, **kwargs)
+#         # Agregar información personalizada a la respuesta si es necesario
+#         return response
+
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        # Agregar información personalizada a la respuesta si es necesario
+
+        if response.status_code == 200:  # Solo registrar si la autenticación fue exitosa
+            user = self.get_user(request)
+            device_token = request.data.get('device_token')  # El token del dispositivo debe enviarse en la solicitud
+
+            if device_token:
+                # Registrar el token en el modelo Suscripcion
+                TokenBlacklist.objects.create(user=user, token=device_token)
+
         return response
+
+    def get_user(self, request):
+        """
+        Obtiene el usuario autenticado basado en las credenciales del request.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return serializer.user
 
 
 class CustomTokenRefreshView(TokenRefreshView):
