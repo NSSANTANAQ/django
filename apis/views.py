@@ -119,12 +119,15 @@ class CustomTokenRefreshView(TokenRefreshView):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])  # Permitir acceso sin autenticación
 def register_token(request):
     if request.method == 'POST':
-        token = request.POST.get('token')
+        # Obtén el token desde los datos JSON en lugar de `request.POST`
+        token = request.data.get('token')  # Maneja JSON directamente
         user = request.user if request.user.is_authenticated else None
 
         if token:
+            # Crea o actualiza el token en la base de datos
             TokenBlacklist.objects.update_or_create(token=token, defaults={'user': user})
             return JsonResponse({'success': True, 'message': 'Token registered'})
         return JsonResponse({'success': False, 'message': 'Token missing'})
