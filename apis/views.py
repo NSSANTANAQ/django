@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Suscripcion, TokenBlacklist
+from .models import Suscripcion
 from .serializer import UserSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -46,7 +46,7 @@ class LoginView(APIView):
             access_token = str(refresh.access_token)
 
             # Check if token is blacklisted
-            if TokenBlacklist.objects.filter(token=access_token).exists():
+            if Suscripcion.objects.filter(token=access_token).exists():
                 return Response({'message': 'Token revoked or expired'}, status=status.HTTP_401_UNAUTHORIZED)
 
             return Response({
@@ -100,7 +100,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
             if device_token:
                 # Registrar el token en el modelo Suscripcion
-                TokenBlacklist.objects.create(user=user, token=device_token)
+                Suscripcion.objects.create(user=user, token=device_token)
 
         return response
 
@@ -130,7 +130,7 @@ def register_token(request):
     user = request.user
 
     # Crear o actualizar el token asociado al usuario
-    TokenBlacklist.objects.update_or_create(token=token, defaults={'user': user})
+    Suscripcion.objects.update_or_create(token=token, defaults={'user': user})
 
     return JsonResponse({'success': True, 'message': 'Token registered'}, status=200)
 
@@ -145,7 +145,7 @@ def revoke_token_view(request):
 
     if token:
         try:
-            TokenBlacklist.objects.create(user=user, token=token)
+            Suscripcion.objects.create(user=user, token=token)
             return Response({"msg": "Token revoked successfully"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

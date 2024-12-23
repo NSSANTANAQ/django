@@ -97,20 +97,20 @@ DATABASES = {
         'NAME': "railway",
         'USER': "postgres",
         'PASSWORD': "XWNyYyJwiuHcXmaHxkbAozJjHZKNqTeT",
-        # 'HOST': "autorack.proxy.rlwy.net",
-        # 'PORT': "15788",
-        'HOST': "postgres.railway.internal",
-        'PORT': "5432",
+        'HOST': "autorack.proxy.rlwy.net",
+        'PORT': "15788",
+        # 'HOST': "postgres.railway.internal",
+        # 'PORT': "5432",
     },
     'railway': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Ejemplo con PostgreSQL
         'NAME': 'railway',
         'USER': 'postgres',
         'PASSWORD': 'TzOSnbbVhSPuqzcHtDeDQxeFPtfuDCie',
-        # 'HOST': 'junction.proxy.rlwy.net',
-        # 'PORT': '29129',
-        'HOST': "meticulous-empathy.railway.internal",
-        'PORT': "5432",
+        'HOST': 'junction.proxy.rlwy.net',
+        'PORT': '29129',
+        # 'HOST': "meticulous-empathy.railway.internal",
+        # 'PORT': "5432",
         # 'OPTIONS': {
         #     'options': '-c search_path=administracion,auditoria,financiero,seguridad'
         # }
@@ -240,26 +240,24 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,                # Invalidar tokens antiguos
 }
 
-import os
-from firebase_admin import credentials, initialize_app
-
-print("FIREBASE_TYPE:", os.getenv("FIREBASE_TYPE"))
-print("FIREBASE_PRIVATE_KEY:", os.getenv("FIREBASE_PRIVATE_KEY"))
-
-# Configurar credenciales desde variables de entorno
-cred = credentials.Certificate({
-    "type": config("FIREBASE_TYPE"),
-    "project_id": config("FIREBASE_PROJECT_ID"),
-    "private_key_id": config("FIREBASE_PRIVATE_KEY_ID"),
-    "private_key": config("FIREBASE_PRIVATE_KEY").replace("\\n", "\n"),
-    "client_email": config("FIREBASE_CLIENT_EMAIL"),
-    "client_id": config("FIREBASE_CLIENT_ID"),
-    "auth_uri": config("FIREBASE_AUTH_URI"),
-    "token_uri": config("FIREBASE_TOKEN_URI"),
-    "auth_provider_x509_cert_url": config("FIREBASE_AUTH_PROVIDER_CERT_URL"),
-    "client_x509_cert_url": config("FIREBASE_CLIENT_CERT_URL")
-})
-
-
-if not firebase_admin._apps:  # Evitar múltiples inicializaciones
-    firebase_admin.initialize_app(cred)
+# import os
+# from firebase_admin import credentials, initialize_app
+#
+#
+# # Configurar credenciales desde variables de entorno
+# cred = credentials.Certificate({
+#     "type": config("FIREBASE_TYPE"),
+#     "project_id": config("FIREBASE_PROJECT_ID"),
+#     "private_key_id": config("FIREBASE_PRIVATE_KEY_ID"),
+#     "private_key": config("FIREBASE_PRIVATE_KEY").replace("\\n", "\n"),
+#     "client_email": config("FIREBASE_CLIENT_EMAIL"),
+#     "client_id": config("FIREBASE_CLIENT_ID"),
+#     "auth_uri": config("FIREBASE_AUTH_URI"),
+#     "token_uri": config("FIREBASE_TOKEN_URI"),
+#     "auth_provider_x509_cert_url": config("FIREBASE_AUTH_PROVIDER_CERT_URL"),
+#     "client_x509_cert_url": config("FIREBASE_CLIENT_CERT_URL")
+# })
+#
+#
+# if not firebase_admin._apps:  # Evitar múltiples inicializaciones
+#     firebase_admin.initialize_app(cred)
