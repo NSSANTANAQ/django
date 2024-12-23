@@ -126,6 +126,7 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'
 CSRF_TRUSTED_ORIGINS = [
     'https://serviciosenlinea.epmapas.gob.ec',
     'https://django-server-production-b121.up.railway.app',
+    'https://fcm.googleapis.com',
 ]
 
 # Si se establece en True, la sesión se eliminará cuando el usuario cierre el navegador
