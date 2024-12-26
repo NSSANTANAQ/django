@@ -169,4 +169,11 @@ def enviar_notificaciones_async(subscriptions, payload):
     )
 
     response = messaging.send_multicast(message)
+    if response.failure_count > 0:
+        for idx, error in enumerate(response.responses):
+            if not error.success:
+                print(f"Error en el token {tokens[idx]}: {error.exception}")
+
     print(f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}")
+
+
