@@ -32,28 +32,7 @@
                     <!-- Vista previa de las imágenes -->
                 </div>
             </form>
-            <table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Título</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for noticia in result %}
-        <tr>
-            <td>{{ noticia.id }}</td>
-            <td>{{ noticia.titulo }}</td>
-            <td>
-                <form method="get" action="{% url 'probar_notificacion' noticia.id %}">
-                    <button type="submit">Probar Notificación</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            <button onclick="enviarNotificacion()">Enviar Notificación</button>
         </div>
     </div>
 
@@ -99,6 +78,24 @@
                 reader.readAsDataURL(file);
             });
         }
+
+
+
+        function enviarNotificacion() {
+            fetch("/enviar-notificacion-prueba/", {
+                method: "GET",
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Notificaciones enviadas: ${data.notificaciones_enviadas}, fallidas: ${data.notificaciones_fallidas}`);
+                } else {
+                    alert("Error al enviar la notificación: " + data.error);
+                }
+            })
+            .catch(error => alert("Error de conexión: " + error));
+        }
+
     </script>
 
 <style>
