@@ -97,29 +97,23 @@ def probar_notificacion(request, noticia_id):
 
 
 def enviar_notificacion_prueba(request):
-    try:
-        # Obtener todos los tokens registrados en el modelo Suscripcion
-        tokens = Suscripcion.objects.values_list('token', flat=True)
+    # Obtiene los tokens de las suscripciones
+    subscriptions = Suscripcion.objects.all()
+    tokens = [s.token for s in subscriptions if s.token]
 
-        if not tokens:
-            return JsonResponse({"success": False, "error": "No hay tokens registrados."})
+    if not tokens:
+        messages.error(request, "No hay tokens registrados para enviar notificaciones.")
+        return redirect('admin_noticias')  # Ajusta al nombre de tu vista principal
 
-        # Crear el mensaje Multicast para enviar a varios tokens
-        message = messaging.MulticastMessage(
-            notification=messaging.Notification(
-                title="Prueba de Notificación",
-                body="Esta es una notificación enviada desde Django",
-            ),
-            tokens=list(tokens),  # Convertir a lista si es necesario
-        )
+    # Enviar notificaciones
+    message = messaging.MulticastMessage(
+        notification=messaging.Notification(
+            title="Prueba de Notificación",
+            body="Esta es una notificación de prueba desde Django.",
+        ),
+        tokens=tokens,
+    )
 
-        # Enviar la notificación
-        response = messaging.send_multicast(message)
-
-        return JsonResponse({
-            "success": True,
-            "notificaciones_enviadas": response.success_count,
-            "notificaciones_fallidas": response.failure_count,
-        })
-    except Exception as e:
-        return JsonResponse({"success": False, "error": str(e)})
+    response = messaging.send_multicast(message)
+    messages.success(request, f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}")
+    return redirect('admin_noticias')  # Ajusta al nombre de tu vista principal

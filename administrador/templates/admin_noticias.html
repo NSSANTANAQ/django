@@ -32,7 +32,9 @@
                     <!-- Vista previa de las imágenes -->
                 </div>
             </form>
-            <button onclick="enviarNotificacion()">Enviar Notificación</button>
+            <a href="{% url 'enviar-notificacion-prueba' %}" class="sidebar-link mx-3" onclick="showLoadingModal()">
+    <i class="fa fa-bell" aria-hidden="true"></i> Enviar Notificación
+</a>
         </div>
     </div>
 
