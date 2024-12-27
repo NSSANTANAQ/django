@@ -82,7 +82,8 @@
 
 
         function enviarNotificacion() {
-            fetch("/enviar-notificacion-prueba/", {
+            const url = "{% url 'enviar-notificacion-prueba' %}";
+            fetch(url, {
                 method: "GET",
             })
             .then(response => response.json())
