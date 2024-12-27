@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 
-ALLOWED_HOSTS = ['serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
+ALLOWED_HOSTS = ['googleapis.com','serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
 
 # FORM SUBMISSION
 # Comment out the following line and place your railway URL, and your production URL in the array.
@@ -126,7 +126,7 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'
 CSRF_TRUSTED_ORIGINS = [
     'https://serviciosenlinea.epmapas.gob.ec',
     'https://django-server-production-b121.up.railway.app',
-    'https://fcm.googleapis.com',
+    'https://googleapis.com',
 ]
 
 # Si se establece en True, la sesión se eliminará cuando el usuario cierre el navegador
