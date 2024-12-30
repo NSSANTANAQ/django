@@ -30,7 +30,7 @@ def menu_admin(request):
     return render(request, 'menu_admin.html')
 
 def enviar_notificaciones_async(subscriptions, payload):
-    tokens = [subscription.token for subscription in subscriptions if subscription.token]
+    tokens = Suscripcion.objects.values_list('token', flat=True)
     for token in tokens:
         try:
             # Crear el mensaje para un solo token
