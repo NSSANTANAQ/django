@@ -29,24 +29,6 @@ def menu_admin(request):
     # Lógica del menú de administrador
     return render(request, 'menu_admin.html')
 
-def enviar_notificaciones_async(subscriptions, payload):
-    tokens = Suscripcion.objects.values_list('token', flat=True)
-    for token in tokens:
-        try:
-            # Crear el mensaje para un solo token
-            message = messaging.Message(
-                notification=messaging.Notification(
-                    title=payload.get("title"),
-                    body=payload.get("body"),
-                ),
-                token=token,
-            )
-            response = messaging.send(message)
-            messages.success(requests,f"Notificaciones enviadas: {token}, {response}")
-            print(f"Notificación enviada al token : {response}")
-        except Exception as e:
-            messages.warning(requests, f"Error al enviar al token: {token}, {str(e)}")
-            print(f"Error al enviar al token {token}: {str(e)}")
 
 def admin_noticias(request):
     if request.method == 'POST':
@@ -55,6 +37,7 @@ def admin_noticias(request):
         if noticia_form.is_valid():
             noticia = noticia_form.save()
 
+            # Guardar imágenes asociadas
             archivos = request.FILES.getlist('imagenes')
             for archivo in archivos:
                 ImagenNoticia.objects.create(noticia=noticia, imagen=archivo)
@@ -66,7 +49,10 @@ def admin_noticias(request):
                 "url": f"https://serviciosenlinea.epmapas.gob.ec/administrador/admin_noticias/{noticia.id}",
             }
             subscriptions = Suscripcion.objects.all()
-            Thread(target=enviar_notificaciones_async, args=(subscriptions, payload)).start()
+            tokens = subscriptions.values_list('token', flat=True)
+
+            # Inicia el subproceso para enviar notificaciones
+            Thread(target=enviar_notificaciones_async, args=(tokens, payload)).start()
 
             messages.success(request, "Noticia creada y notificaciones enviadas correctamente.")
             return redirect('admin_noticias')
@@ -78,6 +64,26 @@ def admin_noticias(request):
         'noticia_form': noticia_form,
         'result': result,
     })
+
+
+def enviar_notificaciones_async(tokens, payload):
+    """
+    Enviar notificaciones push a múltiples tokens.
+    """
+    for token in tokens:
+        try:
+            # Crear el mensaje para un solo token
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title=payload.get("title"),
+                    body=payload.get("body"),
+                ),
+                token=token,
+            )
+            response = messaging.send(message)
+            print(f"Notificación enviada al token {token}: {response}")
+        except Exception as e:
+            print(f"Error al enviar al token {token}: {str(e)}")
 
 def subir_imagen(request, noticia_id):
     if request.method == 'POST':
