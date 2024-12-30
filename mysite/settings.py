@@ -234,6 +234,8 @@ REST_FRAMEWORK = {
     ),
 }
 
+FCM_SERVER_KEY = os.getenv("FCM_SERVER_KEY")
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Tiempo de vigencia del token
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Tiempo de vigencia del refresh token
@@ -262,3 +264,4 @@ cred = credentials.Certificate({
 
 if not firebase_admin._apps:  # Evitar múltiples inicializaciones
     firebase_admin.initialize_app(cred)
+

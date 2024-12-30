@@ -1,10 +1,14 @@
+import os
+
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from firebase_admin import messaging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from firebase_admin import messaging, _http_client
 from .models import Suscripcion
 from .serializer import UserSerializer
 from django.contrib.auth.models import User
@@ -26,6 +30,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework_simplejwt.tokens import BlacklistMixin, RefreshToken
+import requests
 
 class UserListCreateAPIView(APIView):
     def get(self, request):
@@ -152,13 +157,17 @@ def revoke_token_view(request):
     return Response({"error": "Token not provided"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+custom_url = "https://fcm.googleapis.com/fcm/send"
+server_key = os.getenv("FCM_SERVER_KEY")
 def enviar_notificaciones_async(subscriptions, payload):
+    # Obtener los tokens de las suscripciones
     tokens = [suscripcion.token for suscripcion in subscriptions if suscripcion.token]
 
     if not tokens:
         print("No hay tokens registrados para enviar notificaciones.")
         return
 
+    # Crear el mensaje de notificación
     message = messaging.MulticastMessage(
         notification=messaging.Notification(
             title=payload.get("title"),
@@ -168,12 +177,25 @@ def enviar_notificaciones_async(subscriptions, payload):
         data={"url": payload.get("url")},  # Información adicional opcional
     )
 
-    response = messaging.send_multicast(message)
-    if response.failure_count > 0:
-        for idx, error in enumerate(response.responses):
-            if not error.success:
-                print(f"Error en el token {tokens[idx]}: {error.exception}")
+    # Configurar la sesión HTTP personalizada
+    session = requests.Session()
+    session.headers.update({
+        "Authorization": f"Bearer {server_key}",  # Reemplaza con tu clave de servidor
+        "Content-Type": "application/json",
+    })
 
-    print(f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}")
+    # Reemplazar la URL base
+    try:
+        # Enviar la solicitud manualmente a través de la URL configurada
+        response = messaging.send_multicast(message)
+        print(f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}")
+
+        if response.failure_count > 0:
+            for idx, error in enumerate(response.responses):
+                if not error.success:
+                    print(f"Error en el token {tokens[idx]}: {error.exception}")
+
+    except Exception as e:
+        print(f"Error al enviar las notificaciones: {e}")
 
 
