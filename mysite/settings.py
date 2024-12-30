@@ -264,4 +264,3 @@ cred = credentials.Certificate({
 if not firebase_admin._apps:  # Evitar múltiples inicializaciones
     firebase_admin.initialize_app(cred)
 
-messaging.FCM_API_BASE_URL = "https://fcm.googleapis.com/fcm/send"

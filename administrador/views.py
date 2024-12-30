@@ -114,6 +114,6 @@ def enviar_notificacion_prueba(request):
         tokens=tokens,
     )
 
-    response = messaging.send_multicast(message)
+    response = messaging.send(message)
     messages.success(request, f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}")
     return redirect('admin_noticias')  # Ajusta al nombre de tu vista principal
