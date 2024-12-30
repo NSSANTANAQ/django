@@ -244,8 +244,7 @@ SIMPLE_JWT = {
 }
 
 import os
-from firebase_admin import credentials, initialize_app
-
+from firebase_admin import credentials, initialize_app, messaging
 
 # Configurar credenciales desde variables de entorno
 cred = credentials.Certificate({
@@ -265,3 +264,4 @@ cred = credentials.Certificate({
 if not firebase_admin._apps:  # Evitar múltiples inicializaciones
     firebase_admin.initialize_app(cred)
 
+messaging.FCM_API_BASE_URL = "https://fcm.googleapis.com/fcm/send"
