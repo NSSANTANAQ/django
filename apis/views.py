@@ -160,14 +160,12 @@ def revoke_token_view(request):
 custom_url = "https://fcm.googleapis.com/fcm/send"
 server_key = os.getenv("FCM_SERVER_KEY")
 def enviar_notificaciones_async(subscriptions, payload):
-    # Obtener los tokens de las suscripciones
-    tokens = [suscripcion.token for suscripcion in subscriptions if suscripcion.token]
+    tokens = [subscription.token for subscription in subscriptions if subscription.token]
 
     if not tokens:
         print("No hay tokens registrados para enviar notificaciones.")
         return
 
-    # Crear el mensaje de notificación
     message = messaging.MulticastMessage(
         notification=messaging.Notification(
             title=payload.get("title"),
@@ -177,25 +175,12 @@ def enviar_notificaciones_async(subscriptions, payload):
         data={"url": payload.get("url")},  # Información adicional opcional
     )
 
-    # Configurar la sesión HTTP personalizada
-    session = requests.Session()
-    session.headers.update({
-        "Authorization": f"Bearer {server_key}",  # Reemplaza con tu clave de servidor
-        "Content-Type": "application/json",
-    })
+    response = messaging.send_multicast(message)
+    if response.failure_count > 0:
+        for idx, error in enumerate(response.responses):
+            if not error.success:
+                print(f"Error en el token {tokens[idx]}: {error.exception}")
 
-    # Reemplazar la URL base
-    try:
-        # Enviar la solicitud manualmente a través de la URL configurada
-        response = messaging.send_multicast(message)
-        print(f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}")
-
-        if response.failure_count > 0:
-            for idx, error in enumerate(response.responses):
-                if not error.success:
-                    print(f"Error en el token {tokens[idx]}: {error.exception}")
-
-    except Exception as e:
-        print(f"Error al enviar las notificaciones: {e}")
+    print(f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}")
 
 
