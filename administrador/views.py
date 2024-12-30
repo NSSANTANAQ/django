@@ -20,9 +20,6 @@ from django.dispatch import receiver
 import requests
 from django.contrib import messages
 from threading import Thread
-from django.http import JsonResponse
-from firebase_admin import messaging
-
 def es_admin(user):
     return user.is_authenticated and user.is_staff
 
@@ -105,7 +102,8 @@ def enviar_notificacion_prueba(request):
             "title": "Prueba de Notificación",
             "body": "Esto es una notificación de prueba."
         },
-        "token": "fR5MQgmqSsusFAgsQyWfTo:APA91bGRQijlWrX-7J3V2F6f2aIs-e2l2wgPQBx91Y06k6ZFqKaALGdqZEIqyftgs5WNRgufmUA8TbUDJW4oIPfgTbR_VAkoMzbHBX2PfYVy8ZLPz3XMO8s"  # Aquí el token del dispositivo
+        "token": "fR5MQgmqSsusFAgsQyWfTo:APA91bGRQijlWrX-7J3V2F6f2aIs-e2l2wgPQBx91Y06k6ZFqKaALGdqZEIqyftgs5WNRgufmUA8TbUDJW4oIPfgTbR_VAkoMzbHBX2PfYVy8ZLPz3XMO8s"
+        # Aquí el token del dispositivo
     }
 
     # Verificar que el token no sea vacío
@@ -124,20 +122,8 @@ def enviar_notificacion_prueba(request):
         token=payload["token"]
     )
 
-    # Enviar el mensaje
-    try:
-        response = messaging.send(message)  # Enviar la notificación
-        return JsonResponse({
-            "success": True,
-            "message": "Notificación enviada exitosamente.",
-            "response": {
-                "success_count": response.success_count,
-                "failure_count": response.failure_count,
-                "results": response.results
-            }
-        })
-    except messaging.FirebaseError as e:
-        return JsonResponse({
-            "success": False,
-            "message": f"Error al enviar la notificación: {str(e)}"
-        })
+
+    response = messaging.send(message)
+    messages.success(request, f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}")
+    return redirect('admin_noticias')  # Ajusta al nombre de tu vista principal
+
