@@ -111,7 +111,7 @@ def enviar_notificacion_prueba(request):
             title="Prueba de Notificación",
             body="Esta es una notificación de prueba desde Django.",
         ),
-        tokens=tokens,
+        token=tokens,
     )
 
     response = messaging.send(message)
