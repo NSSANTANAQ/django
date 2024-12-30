@@ -157,30 +157,8 @@ def revoke_token_view(request):
     return Response({"error": "Token not provided"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-custom_url = "https://fcm.googleapis.com/fcm/send"
-server_key = os.getenv("FCM_SERVER_KEY")
-def enviar_notificaciones_async(subscriptions, payload):
-    tokens = [subscription.token for subscription in subscriptions if subscription.token]
 
-    if not tokens:
-        print("No hay tokens registrados para enviar notificaciones.")
-        return
 
-    message = messaging.MulticastMessage(
-        notification=messaging.Notification(
-            title=payload.get("title"),
-            body=payload.get("body"),
-        ),
-        tokens=tokens,
-        data={"url": payload.get("url")},  # Información adicional opcional
-    )
 
-    response = messaging.send_multicast(message)
-    if response.failure_count > 0:
-        for idx, error in enumerate(response.responses):
-            if not error.success:
-                print(f"Error en el token {tokens[idx]}: {error.exception}")
-
-    print(f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}")
 
 

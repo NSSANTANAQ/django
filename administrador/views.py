@@ -30,23 +30,24 @@ def menu_admin(request):
     return render(request, 'menu_admin.html')
 
 def enviar_notificaciones_async(subscriptions, payload):
-    tokens = [suscripcion.token for suscripcion in subscriptions if suscripcion.token]
+    tokens = [subscription.token for subscription in subscriptions if subscription.token]
 
-    if not tokens:
-        print("No hay tokens registrados para enviar notificaciones.")
-        return
-
-    message = messaging.MulticastMessage(
-        notification=messaging.Notification(
-            title=payload.get("title"),
-            body=payload.get("body"),
-        ),
-        tokens=tokens,
-        data={"url": payload.get("url")},  # Información adicional opcional
-    )
-
-    response = messaging.send_multicast(message)
-    print(f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}")
+    for token in tokens:
+        try:
+            # Crear el mensaje para un solo token
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title=payload.get("title"),
+                    body=payload.get("body"),
+                ),
+                token=token,
+            )
+            response = messaging.send(message)
+            messages.success(requests,f"Notificaciones enviadas: {token}, {response}")
+            print(f"Notificación enviada al token : {response}")
+        except Exception as e:
+            messages.success(requests, f"Notificaciones enviadas: {token}, {str(e)}")
+            print(f"Error al enviar al token {token}: {str(e)}")
 
 def admin_noticias(request):
     if request.method == 'POST':
