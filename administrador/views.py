@@ -31,7 +31,6 @@ def menu_admin(request):
 
 def enviar_notificaciones_async(subscriptions, payload):
     tokens = [subscription.token for subscription in subscriptions if subscription.token]
-
     for token in tokens:
         try:
             # Crear el mensaje para un solo token
@@ -46,7 +45,7 @@ def enviar_notificaciones_async(subscriptions, payload):
             messages.success(requests,f"Notificaciones enviadas: {token}, {response}")
             print(f"Notificación enviada al token : {response}")
         except Exception as e:
-            messages.success(requests, f"Notificaciones enviadas: {token}, {str(e)}")
+            messages.warning(requests, f"Error al enviar al token: {token}, {str(e)}")
             print(f"Error al enviar al token {token}: {str(e)}")
 
 def admin_noticias(request):
@@ -111,10 +110,8 @@ def enviar_notificacion_prueba(request):
                 token=token
             )
             response = messaging.send(message)
-            messages.success(request, f"Notificaciones enviadas: {token}, {response}")
             print(f"Notificación enviada al token : {response}")
         except Exception as e:
-            messages.success(request, f"Notificaciones enviadas: {token}, {str(e)}")
             print(f"Error al enviar al token {token}: {str(e)}")
 
     return redirect('admin_noticias')  # Ajusta al nombre de tu vista principal
