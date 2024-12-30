@@ -106,7 +106,7 @@ def enviar_notificacion_prueba(request):
         return redirect('admin_noticias')  # Ajusta al nombre de tu vista principal
 
     # Enviar notificaciones
-    message = messaging.MulticastMessage(
+    message = messaging.Message(
         notification=messaging.Notification(
             title="Prueba de Notificación",
             body="Esta es una notificación de prueba desde Django.",
