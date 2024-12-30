@@ -97,57 +97,25 @@ def probar_notificacion(request, noticia_id):
 
 
 def enviar_notificacion_prueba(request):
-    # Obtener todos los tokens desde la tabla `Suscripcion`
     tokens = Suscripcion.objects.values_list('token', flat=True)
 
-    # Verificar si hay tokens
-    if not tokens:
-        return JsonResponse({
-            "success": False,
-            "message": "No hay tokens registrados para enviar notificaciones."
-        })
-
-    # Configurar los datos de la notificación
-    payload = {
-        "notification": {
-            "title": "Notificación para suscriptores",
-            "body": "Esto es un mensaje masivo para todos los suscriptores."
-        }
-    }
-
-    # Crear el mensaje de notificación masivo
-    message = messaging.MulticastMessage(
-        notification=messaging.Notification(
-            title=payload["notification"]["title"],
-            body=payload["notification"]["body"]
-        ),
-        tokens=list(tokens)  # Convertir el QuerySet en lista
-    )
-
-    try:
-        # Enviar el mensaje a todos los tokens
-        response = messaging.send_multicast(message)
-
-        # Procesar los resultados
-        fallos = [
-            {"token": tokens[idx], "error": str(error.exception)}
-            for idx, error in enumerate(response.responses)
-            if not error.success
-        ]
-
-        return JsonResponse({
-            "success": True,
-            "message": f"Notificaciones enviadas: {response.success_count}, fallidas: {response.failure_count}",
-            "fallos": fallos  # Opcional: Detalles de los errores
-        })
-    except Exception as e:
-        return JsonResponse({
-            "success": False,
-            "message": f"Error al enviar las notificaciones: {str(e)}"
-        })
+    for token in tokens:
+        try:
+            # Crear el mensaje para un solo token
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title="Título de Prueba",
+                    body="Este es un mensaje de prueba individual."
+                ),
+                token=token
+            )
+            response = messaging.send(message)
+            print(f"Notificación enviada al token {token}: {response}")
+        except Exception as e:
+            print(f"Error al enviar al token {token}: {str(e)}")
 
 
-
-
-
+    response = messaging.send(message)
+    messages.success(request, f"Notificaciones enviadas: , fallidas: ")
+    return redirect('admin_noticias')  # Ajusta al nombre de tu vista principal
 
