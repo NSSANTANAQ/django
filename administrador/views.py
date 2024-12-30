@@ -110,12 +110,11 @@ def enviar_notificacion_prueba(request):
                 token=token
             )
             response = messaging.send(message)
-            print(f"Notificación enviada al token {token}: {response}")
+            messages.success(request, f"Notificaciones enviadas: {token}, {response}")
+            print(f"Notificación enviada al token : {response}")
         except Exception as e:
+            messages.success(request, f"Notificaciones enviadas: {token}, {str(e)}")
             print(f"Error al enviar al token {token}: {str(e)}")
 
-
-    response = messaging.send(message)
-    messages.success(request, f"Notificaciones enviadas: , fallidas: ")
     return redirect('admin_noticias')  # Ajusta al nombre de tu vista principal
 
