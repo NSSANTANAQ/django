@@ -97,20 +97,20 @@ DATABASES = {
         'NAME': "railway",
         'USER': "postgres",
         'PASSWORD': "XWNyYyJwiuHcXmaHxkbAozJjHZKNqTeT",
-        'HOST': "autorack.proxy.rlwy.net",
-        'PORT': "15788",
-        # 'HOST': "postgres.railway.internal",
-        # 'PORT': "5432",
+        # 'HOST': "autorack.proxy.rlwy.net",
+        # 'PORT': "15788",
+        'HOST': "postgres.railway.internal",
+        'PORT': "5432",
     },
     'railway': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Ejemplo con PostgreSQL
         'NAME': 'railway',
         'USER': 'postgres',
         'PASSWORD': 'TzOSnbbVhSPuqzcHtDeDQxeFPtfuDCie',
-        'HOST': 'junction.proxy.rlwy.net',
-        'PORT': '29129',
-        # 'HOST': "meticulous-empathy.railway.internal",
-        # 'PORT': "5432",
+        # 'HOST': 'junction.proxy.rlwy.net',
+        # 'PORT': '29129',
+        'HOST': "meticulous-empathy.railway.internal",
+        'PORT': "5432",
         # 'OPTIONS': {
         #     'options': '-c search_path=administracion,auditoria,financiero,seguridad'
         # }
