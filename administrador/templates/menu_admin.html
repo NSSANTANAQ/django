@@ -28,12 +28,19 @@
                     <li class="sidebar-header">
                         Menu Administrador
                     </li>
-                    <li class="sidebar-item">
-                        <a href="{% url 'admin_noticias' %}" class="sidebar-link mx-3" onclick="showLoadingModal()">
-                            <i class="fa fa-info-circle" aria-hidden="true"></i> Noticias
-                        </a>
-
-                    </li>
+                    <li class="sidebar-item dropdown">
+    <a href="#" class="sidebar-link mx-3 dropdown-toggle" onclick="toggleDropdown(event)">
+        <i class="fa fa-info-circle" aria-hidden="true"></i> Noticias
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a href="{% url 'ver_noticias' %}" class="dropdown-item" onclick="showLoadingModal()">Ver Noticias</a>
+        </li>
+        <li>
+            <a href="{% url 'admin_noticias' %}" class="dropdown-item">Crear Noticia</a>
+        </li>
+    </ul>
+</li>
                     <li class="sidebar-item">
                         <a href="" class="sidebar-link mx-3" onclick="showLoadingModal()">
                             <i class="fa fa-th-list" aria-hidden="true"></i> Reportes
@@ -310,6 +317,58 @@ if(isLight()){
 
 
 <style>
+    /* Estilo base para el dropdown */
+    .dropdown {
+        position: relative;
+    }
+
+    /* Escondemos el menú por defecto */
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: 200px;
+    }
+
+    /* Mostrar el menú cuando se active */
+    .dropdown.show .dropdown-menu {
+        display: block;
+    }
+
+    /* Elementos dentro del menú */
+    .dropdown-item {
+        padding: 10px 15px;
+        color: #333;
+        text-decoration: none;
+        display: block;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        color: #000;
+    }
+
+    /* Estilo del enlace principal */
+    .dropdown-toggle {
+        cursor: pointer;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .dropdown-toggle:hover {
+        color: #007bff;
+    }
+
+
     .nav-item .user-card-toggle {
     display: flex;
     align-items: center;
@@ -663,6 +722,23 @@ html[data-bs-theme="light"] .theme-toggle .fa-sun-o {
 </style>
 
 <script>
+    function toggleDropdown(event) {
+        event.preventDefault();
+        const parent = event.target.closest('.dropdown');
+        parent.classList.toggle('show');
+    }
+
+    // Cerrar dropdown si se hace clic fuera
+    document.addEventListener('click', (event) => {
+        const dropdowns = document.querySelectorAll('.dropdown');
+        dropdowns.forEach((dropdown) => {
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+    });
+
+
 
     function showLoadingModal() {
   document.getElementById('loadingModal').style.display = 'flex';
