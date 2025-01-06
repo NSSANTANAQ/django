@@ -1,0 +1,84 @@
+{% extends 'menu_admin.html' %}
+
+{% block content %}
+<div class="card-header">
+        <h5 class="card-title">
+            Noticias.
+        </h5>
+        <h6 class="card-subtitle text-muted">
+            EPMAPAS Informa:
+        </h6>
+    </div>
+                <div class="card-body">
+<div class="table-responsive">
+
+       <table class="table">
+                {% for noticia in noticias %}
+                <div class="col-12 mb-4">
+                    <!-- Card individual para cada noticia con sombra -->
+                    <div class="card shadow-sm">
+                        <div class="row g-0">
+                            <!-- Carrusel para las imágenes de cada noticia -->
+                            <div class="col-md-4 shadow-sm">
+                                <div id="carouselNoticia{{ forloop.counter }}" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        {% for imagen in noticia.imagenes.all %}
+                                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                                    <img src="{{ imagen.imagen.url }}" alt="Imagen de la noticia" class="d-block w-100" style="">
+                                                </div>
+                                        {% endfor %}
+                                    </div>
+                                    <!-- Controles del carrusel -->
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselNoticia{{ forloop.counter }}" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Anterior</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carouselNoticia{{ forloop.counter }}" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Siguiente</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Detalles de la noticia -->
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ noticia.titulo }}</h5>
+                                    <h6 class="card-subtitle text-muted mb-3">{{ noticia.subtitulo }}</h6>
+                                    <p class="card-text">{{ noticia.contenido }}</p>
+                                    <p class="card-text">
+                                        <small class="text-muted">Publicado el {{ noticia.fecha_publicacion|date:"d M Y H:i" }}</small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+           </table>
+            </div>
+                    </div>
+
+
+<style>
+/* Estilo para la tabla que permitirá el scroll vertical */
+.table-responsive {
+  max-height: 480px; /* Establece la altura máxima de la tabla */
+  overflow-y: auto;
+}
+
+
+/* Fija los encabezados de la tabla */
+.table thead th {
+  position: sticky;
+  top: -10px;
+  z-index: 10px;
+}
+
+</style>
+
+
+<script>
+    window.history.pushState({}, document.title, "/");
+</script>
+
+{% endblock %}

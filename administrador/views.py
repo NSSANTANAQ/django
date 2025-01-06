@@ -94,6 +94,13 @@ def subir_imagen(request, noticia_id):
 
     return JsonResponse({'error': 'Método no permitido.'}, status=405)
 
+
+@login_required(login_url='login')
+def admin_ver_noticias(request):
+    noticias = Noticia.objects.prefetch_related('imagenes').order_by('-fecha_publicacion')  # Obtén todas las noticias
+    messages.success(request, 'Exito')
+    return render(request, 'admin_ver_noticias.html', {'noticias': noticias})
+
 # def enviar_notificacion_prueba(request):
 #     tokens = Suscripcion.objects.values_list('token', flat=True)
 #
