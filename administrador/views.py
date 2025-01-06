@@ -40,7 +40,7 @@ def admin_noticias(request):
             # Guardar imágenes asociadas
             archivos = request.FILES.getlist('imagenes')
             for archivo in archivos:
-                ImagenNoticia.objects.create(noticia=noticia.id, imagen=archivo)
+                ImagenNoticia.objects.create(noticia=noticia, imagen=archivo)
 
             # Envío de notificaciones push
             payload = {
