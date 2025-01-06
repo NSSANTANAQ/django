@@ -40,7 +40,7 @@ def admin_noticias(request):
             # Guardar imágenes asociadas
             archivos = request.FILES.getlist('imagenes')
             for archivo in archivos:
-                ImagenNoticia.objects.create(noticia=noticia, imagen=archivo)
+                ImagenNoticia.objects.create(noticia=noticia.id, imagen=archivo)
 
             # Envío de notificaciones push
             payload = {
@@ -94,31 +94,23 @@ def subir_imagen(request, noticia_id):
 
     return JsonResponse({'error': 'Método no permitido.'}, status=405)
 
-
-
-def probar_notificacion(request, noticia_id):
-    noticia = get_object_or_404(Noticia, pk=noticia_id)
-    resultados = noticia
-    return JsonResponse({"resultados": resultados})
-
-
-def enviar_notificacion_prueba(request):
-    tokens = Suscripcion.objects.values_list('token', flat=True)
-
-    for token in tokens:
-        try:
-            # Crear el mensaje para un solo token
-            message = messaging.Message(
-                notification=messaging.Notification(
-                    title="Título de Prueba",
-                    body="Este es un mensaje de prueba individual."
-                ),
-                token=token
-            )
-            response = messaging.send(message)
-            print(f"Notificación enviada al token : {response}")
-        except Exception as e:
-            print(f"Error al enviar al token {token}: {str(e)}")
-
-    return redirect('admin_noticias')  # Ajusta al nombre de tu vista principal
+# def enviar_notificacion_prueba(request):
+#     tokens = Suscripcion.objects.values_list('token', flat=True)
+#
+#     for token in tokens:
+#         try:
+#             # Crear el mensaje para un solo token
+#             message = messaging.Message(
+#                 notification=messaging.Notification(
+#                     title="Título de Prueba",
+#                     body="Este es un mensaje de prueba individual."
+#                 ),
+#                 token=token
+#             )
+#             response = messaging.send(message)
+#             print(f"Notificación enviada al token : {response}")
+#         except Exception as e:
+#             print(f"Error al enviar al token {token}: {str(e)}")
+#
+#     return redirect('admin_noticias')  # Ajusta al nombre de tu vista principal
 
