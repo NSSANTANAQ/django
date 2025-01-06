@@ -12,7 +12,7 @@
                     <h6 class="card-subtitle text-muted">Datos de la Noticia</h6>
                 </div>
                 <div class="card-body">
-                    <form method="post" action="{% url 'crear_noticia' %}" enctype="multipart/form-data">
+                    <form method="post" action="{% url 'admin_noticias' %}" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ noticia_form.as_p }}
                         <button type="submit" class="btn btn-primary mt-3">Crear Noticia</button>
