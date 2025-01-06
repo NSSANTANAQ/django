@@ -29,7 +29,7 @@ def menu_admin(request):
     # Lógica del menú de administrador
     return render(request, 'menu_admin.html')
 
-
+@login_required(login_url='login')
 def admin_noticias(request):
     if request.method == 'POST':
         noticia_form = NoticiaForm(request.POST, request.FILES)
