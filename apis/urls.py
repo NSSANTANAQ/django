@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
-from .views import revoke_token_view, UserListCreateAPIView,LoginView,CustomTokenObtainPairView,CustomTokenRefreshView
+from .views import revoke_token_view, UserListCreateAPIView, LoginView, CustomTokenObtainPairView, \
+    CustomTokenRefreshView, api_noticias
 
 urlpatterns = [
     # Define tus endpoints aquí
@@ -13,4 +14,5 @@ urlpatterns = [
     path('revoke-token/', revoke_token_view, name='revoke_token'),
     path('save-token/', views.register_token, name='save_token'),
     path('save-token/', views.register_token, name='save_token'),
+    path('noticias/', api_noticias, name='api_noticias'),
 ]

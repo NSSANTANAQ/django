@@ -9,6 +9,8 @@ from rest_framework import status
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from firebase_admin import messaging, _http_client
+
+from administrador.models import ImagenNoticia, Noticia
 from .models import Suscripcion
 from .serializer import UserSerializer
 from django.contrib.auth.models import User
@@ -157,7 +159,20 @@ def revoke_token_view(request):
     return Response({"error": "Token not provided"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+def api_noticias(request):
+    noticias = Noticia.objects.all().order_by('-fecha_publicacion')
+    resultado = []
+    for noticia in noticias:
+        imagenes = ImagenNoticia.objects.filter(noticia_id=noticia.id)
+        resultado.append({
+            'id': noticia.id,
+            'titulo': noticia.titulo,
+            'subtitulo': noticia.subtitulo,
+            'contenido': noticia.contenido,
+            'fecha_publicacion': noticia.fecha_publicacion.strftime('%Y-%m-%d'),
+            'imagenes': [imagen.imagen for imagen in imagenes],
+        })
+    return JsonResponse({'noticias': resultado})
 
 
 
