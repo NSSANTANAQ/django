@@ -160,19 +160,23 @@ def revoke_token_view(request):
 
 
 def api_noticias(request):
-    noticias = Noticia.objects.all().order_by('-fecha_publicacion')
-    resultado = []
+    noticias = Noticia.objects.all()
+    data = []
+
     for noticia in noticias:
-        imagenes = ImagenNoticia.objects.filter(noticia_id=noticia.id)
-        resultado.append({
-            'id': noticia.id,
-            'titulo': noticia.titulo,
-            'subtitulo': noticia.subtitulo,
-            'contenido': noticia.contenido,
-            'fecha_publicacion': noticia.fecha_publicacion.strftime('%Y-%m-%d'),
-            'imagenes': [imagen.imagen for imagen in imagenes],
+        imagenes = ImagenNoticia.objects.filter(noticia=noticia)  # Obtener imágenes relacionadas
+        imagen_urls = [imagen.imagen.url for imagen in imagenes]  # Extraer URLs
+
+        data.append({
+            "id": noticia.id,
+            "titulo": noticia.titulo,
+            "contenido": noticia.contenido,
+            "subtitulo": noticia.subtitulo,
+            "fecha_publicacion": noticia.fecha_publicacion,
+            "imagenes": imagen_urls,  # Lista de URLs
         })
-    return JsonResponse({'noticias': resultado})
+
+    return JsonResponse({"noticias": data})
 
 
 
