@@ -180,11 +180,11 @@ def api_noticias(request):
     return JsonResponse({"noticias": data})
 
 class CuentasActivasView(APIView):
-    permission_classes = [IsAuthenticated]
+
 
     def get(self, request):
         # Obtener el número de cédula del usuario autenticado
-        cedula_usuario = request.user.username  # Supongo que el username es el número de cédula
+        cedula_usuario = request.user.username # Supongo que el username es el número de cédula
         print(cedula_usuario)
         try:
             # Buscar al cliente con la cédula
