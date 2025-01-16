@@ -206,21 +206,18 @@ class CuentasActivasView(APIView):
 
                     # Si existen cuentas activas
                     if cuentas_activas_result:
-                        # Serializar las cuentas activas, mapeando los datos obtenidos
+                        # Mapear las cuentas activas y serializarlas
                         cuentas_activas = [
                             {
-                                "id": cuenta[0],  # Asumiendo que el ID está en la primera columna
-                                "cliente_id": cuenta[1],  # Cliente asociado (segundo campo)
-                                "estado": cuenta[2],  # Estado de la cuenta (tercer campo)
-                                # Añadir más campos según la estructura de tu tabla
+                                "id": cuenta[0],  # ID de la cuenta
+                                "cliente_id": cuenta[1],  # ID del cliente
+                                "estado": cuenta[2],  # Estado de la cuenta
+                                # Agregar más campos según la estructura de la tabla
                             }
                             for cuenta in cuentas_activas_result
                         ]
 
-                        # Serializar las cuentas activas
-                        serializer = CuentaSerializer(cuentas_activas, many=True)
-
-                        return Response(serializer.data, status=status.HTTP_200_OK)
+                        return Response(cuentas_activas, status=status.HTTP_200_OK)
                     else:
                         return Response(
                             {"error": "No se encontraron cuentas activas para este cliente."},
@@ -232,9 +229,12 @@ class CuentasActivasView(APIView):
                         status=status.HTTP_404_NOT_FOUND
                     )
         except Exception as e:
+            # Log para depuración
+            print(f"Error al procesar la solicitud: {str(e)}")
             return Response(
-                {"error": str(e)},
+                {"error": "Error interno del servidor, por favor intente más tarde."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
 
 
