@@ -1,5 +1,6 @@
 import os
 
+from django.db import connections
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from firebase_admin import messaging
@@ -179,26 +180,61 @@ def api_noticias(request):
 
     return JsonResponse({"noticias": data})
 
+
 class CuentasActivasView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
         # Obtener el número de cédula del usuario autenticado
-        cedula_usuario = request.user.username # Supongo que el username es el número de cédula
+        cedula_usuario = request.user.username  # Suponiendo que el username es el número de cédula
         print(cedula_usuario)
+
         try:
-            # Buscar al cliente con la cédula
-            cliente = AdCliente.objects.using('railway').get(cedula_ruc=cedula_usuario)
-            cuentas_activas = AdCuenta.objects.using('railway').filter(cliente=cliente, estado=24)
+            with connections['railway'].cursor() as cursor:
+                # Consulta para obtener el cliente con el número de cédula
+                cursor.execute('SELECT * FROM administracion.ad_cliente WHERE cedula_ruc = %s', [cedula_usuario])
+                cliente_result = cursor.fetchone()
 
-            # Serializar las cuentas
-            serializer = CuentaSerializer(cuentas_activas, many=True)
+                if cliente_result:
+                    # Obtener el cliente_id desde la consulta
+                    cliente_id = cliente_result[0]  # Suponiendo que el id del cliente es el primer campo
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except AdCliente.DoesNotExist:
+                    # Realizamos una consulta similar para las cuentas activas
+                    cursor.execute('SELECT * FROM administracion.ad_cuenta WHERE cliente_id = %s AND estado = 24',
+                                   [cliente_id])
+                    cuentas_activas_result = cursor.fetchall()
+
+                    # Si existen cuentas activas
+                    if cuentas_activas_result:
+                        # Serializar las cuentas activas, mapeando los datos obtenidos
+                        cuentas_activas = [
+                            {
+                                "id": cuenta[0],  # Asumiendo que el ID está en la primera columna
+                                "cliente_id": cuenta[1],  # Cliente asociado (segundo campo)
+                                "estado": cuenta[2],  # Estado de la cuenta (tercer campo)
+                                # Añadir más campos según la estructura de tu tabla
+                            }
+                            for cuenta in cuentas_activas_result
+                        ]
+
+                        # Serializar las cuentas activas
+                        serializer = CuentaSerializer(cuentas_activas, many=True)
+
+                        return Response(serializer.data, status=status.HTTP_200_OK)
+                    else:
+                        return Response(
+                            {"error": "No se encontraron cuentas activas para este cliente."},
+                            status=status.HTTP_404_NOT_FOUND
+                        )
+                else:
+                    return Response(
+                        {"error": "Cliente no encontrado."},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+        except Exception as e:
             return Response(
-                {"error": "Cliente no encontrado."},
-                status=status.HTTP_404_NOT_FOUND
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
 
