@@ -200,7 +200,7 @@ class CuentasActivasView(APIView):
                     cliente_id = cliente_result[0]  # Suponiendo que el id del cliente es el primer campo
 
                     # Realizamos una consulta similar para las cuentas activas
-                    cursor.execute('SELECT * FROM administracion.ad_cuenta WHERE cliente_id = %s AND estado = 24',
+                    cursor.execute('SELECT * FROM administracion.ad_cuenta WHERE cliente = %s AND estado = 24',
                                    [cliente_id])
                     cuentas_activas_result = cursor.fetchall()
 
