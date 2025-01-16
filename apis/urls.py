@@ -1,4 +1,6 @@
 from django.urls import path
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 from . import views
 from .views import revoke_token_view, UserListCreateAPIView, LoginView, CustomTokenObtainPairView, \
     CustomTokenRefreshView, api_noticias, CuentasActivasView
@@ -13,7 +15,9 @@ urlpatterns = [
     path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
     path('revoke-token/', revoke_token_view, name='revoke_token'),
     path('save-token/', views.register_token, name='save_token'),
-    path('save-token/', views.register_token, name='save_token'),
     path('noticias/', api_noticias, name='api_noticias'),
     path('cuentas/', CuentasActivasView.as_view(), name='cuentas'),
+
+    path('tokens/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('tokens/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
