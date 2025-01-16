@@ -182,6 +182,7 @@ def api_noticias(request):
 
 
 class CuentasActivasView(APIView):
+    permission_classes = [AllowAny]
 
     def get(self, request):
         # Obtener el número de cédula del usuario autenticado
