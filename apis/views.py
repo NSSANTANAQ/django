@@ -188,10 +188,8 @@ class CuentasActivasView(APIView):
         print(cedula_usuario)
         try:
             # Buscar al cliente con la cédula
-            cliente = AdCliente.objects.get(cedula_ruc=cedula_usuario)
-
-            # Filtrar cuentas activas para ese cliente (estado = 24)
-            cuentas_activas = AdCuenta.objects.filter(cliente=cliente, estado=24)
+            cliente = AdCliente.objects.using('railway').get(cedula_ruc=cedula_usuario)
+            cuentas_activas = AdCuenta.objects.using('railway').filter(cliente=cliente.id, estado=24)
 
             # Serializar las cuentas
             serializer = CuentaSerializer(cuentas_activas, many=True)
