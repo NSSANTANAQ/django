@@ -15,5 +15,5 @@ urlpatterns = [
     path('save-token/', views.register_token, name='save_token'),
     path('save-token/', views.register_token, name='save_token'),
     path('noticias/', api_noticias, name='api_noticias'),
-    path('cuentas-activas/', CuentasActivasView.as_view(), name='cuentas-activas'),
+    path('cuentas/', CuentasActivasView.as_view(), name='cuentas'),
 ]
