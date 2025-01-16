@@ -11,8 +11,9 @@ from googleapiclient.errors import HttpError
 from firebase_admin import messaging, _http_client
 
 from administrador.models import ImagenNoticia, Noticia
+from cliente.models import AdCliente, AdCuenta
 from .models import Suscripcion
-from .serializer import UserSerializer
+from .serializer import UserSerializer, CuentaSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
@@ -178,6 +179,28 @@ def api_noticias(request):
 
     return JsonResponse({"noticias": data})
 
+class CuentasActivasView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        # Obtener el número de cédula del usuario autenticado
+        cedula_usuario = request.user.username  # Supongo que el username es el número de cédula
+
+        try:
+            # Buscar al cliente con la cédula
+            cliente = AdCliente.objects.get(cedula_ruc=cedula_usuario)
+
+            # Filtrar cuentas activas para ese cliente (estado = 24)
+            cuentas_activas = AdCuenta.objects.filter(cliente=cliente, estado=24)
+
+            # Serializar las cuentas
+            serializer = CuentaSerializer(cuentas_activas, many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except AdCliente.DoesNotExist:
+            return Response(
+                {"error": "Cliente no encontrado."},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 
