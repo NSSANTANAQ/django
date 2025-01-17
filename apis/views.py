@@ -242,8 +242,8 @@ class CuentasActivasView(APIView):
             return [
                 {
                     "id": cuenta[0],  # ID de la cuenta
-                    "cliente_id": cuenta[1],  # ID del cliente
-                    "estado": cuenta[2],  # Estado de la cuenta
+                    "cliente": cuenta[1],  # ID del cliente
+                    "estado": cuenta[6],  # Estado de la cuenta
                 }
                 for cuenta in cuentas_activas_result
             ] if cuentas_activas_result else None
