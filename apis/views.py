@@ -186,12 +186,9 @@ class CuentasActivasView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Aquí puedes acceder al usuario autenticado
 
         # Obtener el número de cédula del usuario autenticado
-        cedula_usuario = request.user  # Suponiendo que el username es el número de cédula
-        print(cedula_usuario)
-
+        cedula_usuario = request.user.username  # Suponiendo que el username es el número de cédula
         try:
             with connections['railway'].cursor() as cursor:
                 # Consulta para obtener el cliente con el número de cédula
