@@ -227,7 +227,8 @@ VAPID_EMAIL = os.getenv('VAPID_EMAIL', "mailto:nestorsantana12@gmail.com")
 # Configuración de JWT
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.BasicAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
