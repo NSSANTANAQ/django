@@ -192,62 +192,61 @@ def api_noticias(request):
 
 
 class CuentasActivasView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Aquí puedes acceder al usuario autenticado
-        cedula_usuario = request.user.username
-
-        # Obtener el número de cédula del usuario autenticado
-
-        print(cedula_usuario)
+        cedula_usuario = request.user.username  # Usuario autenticado
 
         try:
-            with connections['railway'].cursor() as cursor:
-                # Consulta para obtener el cliente con el número de cédula
-                cursor.execute('SELECT * FROM administracion.ad_cliente WHERE cedula_ruc = %s', [cedula_usuario])
-                cliente_result = cursor.fetchone()
+            # Verificar si el cliente existe
+            cliente_id = self.obtener_cliente(cedula_usuario)
+            if not cliente_id:
+                return Response(
+                    {"error": "Cliente no encontrado."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
 
-                if cliente_result:
-                    # Obtener el cliente_id desde la consulta
-                    cliente_id = cliente_result[0]  # Suponiendo que el id del cliente es el primer campo
+            # Obtener cuentas activas
+            cuentas_activas = self.obtener_cuentas_activas(cliente_id)
+            if not cuentas_activas:
+                return Response(
+                    {"error": "No se encontraron cuentas activas para este cliente."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
 
-                    # Realizamos una consulta similar para las cuentas activas
-                    cursor.execute('SELECT * FROM administracion.ad_cuenta WHERE cliente = %s AND estado = 24',
-                                   [cliente_id])
-                    cuentas_activas_result = cursor.fetchall()
+            return Response(cuentas_activas, status=status.HTTP_200_OK)
 
-                    # Si existen cuentas activas
-                    if cuentas_activas_result:
-                        # Mapear las cuentas activas y serializarlas
-                        cuentas_activas = [
-                            {
-                                "id": cuenta[0],  # ID de la cuenta
-                                "cliente_id": cuenta[1],  # ID del cliente
-                                "estado": cuenta[2],  # Estado de la cuenta
-                                # Agregar más campos según la estructura de la tabla
-                            }
-                            for cuenta in cuentas_activas_result
-                        ]
-
-                        return Response(cuentas_activas, status=status.HTTP_200_OK)
-                    else:
-                        return Response(
-                            {"error": "No se encontraron cuentas activas para este cliente."},
-                            status=status.HTTP_404_NOT_FOUND
-                        )
-                else:
-                    return Response(
-                        {"error": "Cliente no encontrado."},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
         except Exception as e:
-            # Log para depuración
             print(f"Error al procesar la solicitud: {str(e)}")
             return Response(
                 {"error": "Error interno del servidor, por favor intente más tarde."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+    def obtener_cliente(self, cedula_usuario):
+        """
+        Obtiene el cliente_id según la cédula del usuario autenticado.
+        """
+        with connections['railway'].cursor() as cursor:
+            cursor.execute('SELECT * FROM administracion.ad_cliente WHERE cedula_ruc = %s', [cedula_usuario])
+            cliente_result = cursor.fetchone()
+            return cliente_result[0] if cliente_result else None
+
+    def obtener_cuentas_activas(self, cliente_id):
+        """
+        Obtiene las cuentas activas de un cliente específico.
+        """
+        with connections['railway'].cursor() as cursor:
+            cursor.execute('SELECT * FROM administracion.ad_cuenta WHERE cliente = %s AND estado = 24', [cliente_id])
+            cuentas_activas_result = cursor.fetchall()
+            return [
+                {
+                    "id": cuenta[0],  # ID de la cuenta
+                    "cliente_id": cuenta[1],  # ID del cliente
+                    "estado": cuenta[2],  # Estado de la cuenta
+                }
+                for cuenta in cuentas_activas_result
+            ] if cuentas_activas_result else None
 
 
 
