@@ -34,7 +34,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
-from rest_framework_simplejwt.tokens import BlacklistMixin, RefreshToken, UntypedToken
+from rest_framework_simplejwt.tokens import BlacklistMixin, RefreshToken, UntypedToken, AccessToken
 import requests
 
 class UserListCreateAPIView(APIView):
@@ -189,7 +189,12 @@ class CuentasActivasView(APIView):
         try:
             auth_header = request.headers.get('Authorization')
             token = auth_header.split(" ")[1] if auth_header else None
-            UntypedToken(token)  # Validar token manualmente
+            if token:
+                # Intenta validar el token utilizando AccessToken
+                access_token = AccessToken(token)  # Esto valida el token
+            else:
+                return Response({"error": "Token no proporcionado."}, status=401)
+
         except TokenError as e:
             return Response({"error": f"Token inválido: {str(e)}"}, status=401)
 
