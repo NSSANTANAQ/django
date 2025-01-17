@@ -186,19 +186,9 @@ class CuentasActivasView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        try:
-            auth_header = request.headers.get('Authorization')
-            token = auth_header.split(" ")[1] if auth_header else None
-            if token:
-                # Intenta validar el token utilizando AccessToken
-                access_token = AccessToken(token)  # Esto valida el token
-            else:
-                return Response({"error": "Token no proporcionado."}, status=401)
-
-        except TokenError as e:
-            return Response({"error": f"Token inválido: {str(e)}"}, status=401)
-
-        return Response({"message": "Acceso permitido"})
+        # Aquí puedes acceder al usuario autenticado
+        user = request.user
+        return Response({"message": f"Acceso permitido para {user.username}"})
 
 
     # permission_classes = [AllowAny]
