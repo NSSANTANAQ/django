@@ -90,13 +90,6 @@ def RegistrarSuscripcion(request):
     return Response({'message': 'La suscripción ya existe'}, status=status.HTTP_200_OK)
 
 
-# class CustomTokenObtainPairView(TokenObtainPairView):
-#     permission_classes = [permissions.AllowAny]
-#
-#     def post(self, request, *args, **kwargs):
-#         response = super().post(request, *args, **kwargs)
-#         # Agregar información personalizada a la respuesta si es necesario
-#         return response
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = [permissions.AllowAny]
@@ -124,7 +117,23 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class CustomTokenRefreshView(TokenRefreshView):
-    permission_classes = [permissions.AllowAny]
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code == 200:
+            refresh_token = request.data.get('refresh')
+            new_access_token = response.data.get('access')
+
+            # Decodificar el refresh token para obtener el usuario
+            try:
+                decoded_token = RefreshToken(refresh_token)
+                user_id = decoded_token['user_id']
+                # Aquí podrías realizar operaciones con el usuario
+                print(f"Usuario con ID {user_id} renovó el token.")
+            except Exception as e:
+                print(f"Error decodificando el token de refresco: {str(e)}")
+
+        return response
 
 
 
@@ -183,7 +192,7 @@ def api_noticias(request):
 
 
 class CuentasActivasView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         # Aquí puedes acceder al usuario autenticado
