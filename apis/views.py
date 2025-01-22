@@ -4,6 +4,7 @@ from django.db import connections
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from firebase_admin import messaging
+from psycopg2 import DatabaseError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -274,8 +275,14 @@ class CuentasActivasView(APIView):
 
             return Response(cuentas_activas, status=status.HTTP_200_OK)
 
+        except DatabaseError as e:
+            print(f"Error de base de datos: {str(e)}")
+            return Response(
+                {"error": "Error de base de datos, por favor intente más tarde."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
         except Exception as e:
-            print(f"Error al procesar la solicitud: {str(e)}")
+            print(f"Error inesperado: {str(e)}")
             return Response(
                 {"error": "Error interno del servidor, por favor intente más tarde."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -286,43 +293,62 @@ class CuentasActivasView(APIView):
         Obtiene el cliente_id según la cédula del usuario autenticado.
         """
         with connections['railway'].cursor() as cursor:
-            cursor.execute('SELECT * FROM administracion.ad_cliente WHERE cedula_ruc = %s', [cedula_usuario])
+            cursor.execute('SELECT id FROM administracion.ad_cliente WHERE cedula_ruc = %s', [cedula_usuario])
             cliente_result = cursor.fetchone()
             return cliente_result[0] if cliente_result else None
 
     def obtener_cuentas_activas(self, cliente_id):
         """
-        Obtiene las cuentas activas de un cliente específico, incluyendo información adicional.
+        Obtiene las cuentas activas de un cliente específico.
         """
         with connections['railway'].cursor() as cursor:
-            # Obtener información del cliente
-            cursor.execute('SELECT * FROM administracion.ad_cliente WHERE id = %s', [cliente_id])
-            cliente_datos = cursor.fetchone()
-
-        with connections['railway'].cursor() as cursor:
-            # Obtener cuentas activas del cliente en la primera tabla
-            cursor.execute('SELECT * FROM administracion.ad_cuenta WHERE cliente = %s AND estado = 24', [cliente_id])
+            # Consultar cuentas activas de la tabla administracion.ad_cuenta
+            cursor.execute("""
+                SELECT id, direccion 
+                FROM administracion.ad_cuenta 
+                WHERE cliente = %s AND estado = 24
+            """, [cliente_id])
             cuentas_administracion = cursor.fetchall()
 
-        with connections['railway'].cursor() as cursor:
-            # Obtener cuentas activas del cliente en la segunda tabla
-            cursor.execute('SELECT * FROM financiero.ren_liquidacion WHERE cuenta = %s AND estado = 2', [cuentas_administracion])
+            # Consultar cuentas activas de la tabla financiero.ren_liquidacion
+            cursor.execute("""
+                SELECT id, mes_facturacion, total_pago, interes_emision_anterior 
+                FROM financiero.ren_liquidacion 
+                WHERE cliente = %s AND estado_liquidacion = 2
+            """, [cliente_id])
             cuentas_financiero = cursor.fetchall()
 
-        # Combinar resultados de ambas consultas
-        cuentas_activas_result = cliente_datos + cuentas_administracion + cuentas_financiero
-
-        # Retornar datos estructurados
-        return [
+        # Estructurar los resultados de administracion.ad_cuenta
+        cuentas_administracion_estructuradas = [
             {
-                "id": cuenta[0],  # ID de la cuenta
-                "cliente": cuenta[1],  # ID del cliente
-                "estado": cuenta[6],  # Estado de la cuenta
-                "saldo": cuenta[3],  # Saldo de la cuenta
-                "fecha_creacion": cuenta[4],  # Fecha de creación de la cuenta
-                "tipo_cuenta": cuenta[5],  # Tipo de cuenta
+                "fuente": "administracion.ad_cuenta",
+                "id": cuenta[0],
+                "direccion": cuenta[1],
+                "mes_facturacion": None,
+                "total_pago": None,
+                "interes_emision_anterior": None,
             }
-            for cuenta in cuentas_activas_result
-        ] if cuentas_activas_result else None
+            for cuenta in cuentas_administracion
+        ]
+
+        # Estructurar los resultados de financiero.ren_liquidacion
+        cuentas_financiero_estructuradas = [
+            {
+                "fuente": "financiero.ren_liquidacion",
+                "id": cuenta[0],
+                "direccion": None,
+                "mes_facturacion": cuenta[1],
+                "total_pago": cuenta[2],
+                "interes_emision_anterior": cuenta[3],
+            }
+            for cuenta in cuentas_financiero
+        ]
+
+        # Combinar resultados estructurados
+        cuentas_activas_result = cuentas_administracion_estructuradas + cuentas_financiero_estructuradas
+
+        # Retornar la lista combinada, o None si no hay resultados
+        return cuentas_activas_result if cuentas_activas_result else None
+
 
 
