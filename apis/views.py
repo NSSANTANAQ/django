@@ -312,7 +312,7 @@ class CuentasActivasView(APIView):
 
             # Consultar cuentas activas de la tabla financiero.ren_liquidacion
             cursor.execute("""
-                SELECT id, mes_facturacion, total_pago, interes_emision_anterior 
+                SELECT id, mes_facturacion, total_pago, interes_anterior_emision
                 FROM financiero.ren_liquidacion 
                 WHERE cliente = %s AND estado_liquidacion = 2
             """, [cliente_id])
