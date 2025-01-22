@@ -314,7 +314,7 @@ class CuentasActivasView(APIView):
             cursor.execute("""
                 SELECT id, mes_facturacion, total_pago, interes_anterior_emision
                 FROM financiero.ren_liquidacion 
-                WHERE cliente = %s AND estado_liquidacion = 2
+                WHERE cuenta = %s AND estado_liquidacion = 2
             """, [cliente_id])
             cuentas_financiero = cursor.fetchall()
 
@@ -335,13 +335,13 @@ class CuentasActivasView(APIView):
         cuentas_financiero_estructuradas = [
             {
                 "fuente": "financiero.ren_liquidacion",
-                "id": cuenta[0],
+                "id": financiero[0],
                 "direccion": None,
-                "mes_facturacion": cuenta[1],
-                "total_pago": cuenta[2],
-                "interes_emision_anterior": cuenta[3],
+                "mes_facturacion": financiero[1],
+                "total_pago": financiero[2],
+                "interes_emision_anterior": financiero[3],
             }
-            for cuenta in cuentas_financiero
+            for financiero in cuentas_financiero
         ]
 
         # Combinar resultados estructurados
