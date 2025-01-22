@@ -314,7 +314,7 @@ class CuentasActivasView(APIView):
             cursor.execute("""
                 SELECT id, mes_facturacion, total_pago, interes_anterior_emision
                 FROM financiero.ren_liquidacion 
-                WHERE cuenta = %s AND estado_liquidacion = 2
+                WHERE cliente = %s AND estado_liquidacion = 2
             """, [cliente_id])
             cuentas_financiero = cursor.fetchall()
 
