@@ -255,7 +255,6 @@ class CuentasActivasView(APIView):
 
     def get(self, request):
         cedula_usuario = request.user.username  # Usuario autenticado
-        cuenta_id = request.GET.get("cuenta_id", None)  # Parámetro opcional para obtener detalles de una cuenta específica
 
         try:
             # Verificar si el cliente existe
@@ -266,16 +265,7 @@ class CuentasActivasView(APIView):
                     status=status.HTTP_404_NOT_FOUND
                 )
 
-            if cuenta_id:  # Obtener detalles de una cuenta específica
-                detalle_cuenta = self.obtener_detalle_cuenta(cliente_id, cuenta_id)
-                if not detalle_cuenta:
-                    return Response(
-                        {"error": "Cuenta no encontrada o no pertenece al cliente."},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
-                return Response(detalle_cuenta, status=status.HTTP_200_OK)
-
-            # Obtener todas las cuentas activas
+            # Obtener todas las cuentas activas con detalles financieros
             cuentas_activas = self.obtener_cuentas_activas(cliente_id)
             if not cuentas_activas:
                 return Response(
@@ -309,7 +299,7 @@ class CuentasActivasView(APIView):
 
     def obtener_cuentas_activas(self, cliente_id):
         """
-        Obtiene las cuentas activas de un cliente específico.
+        Obtiene las cuentas activas de un cliente específico con sus detalles financieros.
         """
         with connections['railway'].cursor() as cursor:
             # Consultar cuentas activas de la tabla administracion.ad_cuenta
@@ -320,32 +310,29 @@ class CuentasActivasView(APIView):
             """, [cliente_id])
             cuentas_administracion = cursor.fetchall()
 
-        # Estructurar los resultados
-        cuentas_administracion_estructuradas = [
-            {
-                "id": cuenta[0],
-                "direccion": cuenta[1],
+        # Estructurar los resultados y agregar detalles financieros
+        cuentas_activas = []
+        for cuenta in cuentas_administracion:
+            cuenta_id = cuenta[0]
+            direccion = cuenta[1]
+
+            # Obtener los detalles financieros de la cuenta
+            detalles_financieros = self.obtener_detalle_financiero(cuenta_id)
+
+            cuentas_activas.append({
+                "id": cuenta_id,
+                "direccion": direccion,
                 "cliente": cliente_id,
-            }
-            for cuenta in cuentas_administracion
-        ]
+                "detalles_financieros": detalles_financieros,
+            })
 
-        # Retornar la lista de cuentas activas
-        return cuentas_administracion_estructuradas
+        return cuentas_activas
 
-    def obtener_detalle_cuenta(self, cliente_id, cuenta_id):
+    def obtener_detalle_financiero(self, cuenta_id):
+        """
+        Obtiene los detalles financieros de una cuenta específica.
+        """
         with connections['railway'].cursor() as cursor:
-            cursor.execute("""
-                SELECT id, direccion 
-                FROM administracion.ad_cuenta 
-                WHERE id = %s AND cliente = %s AND estado = 24
-            """, [cuenta_id, cliente_id])
-            cuenta = cursor.fetchone()
-
-            if not cuenta:
-                print(f"No se encontró la cuenta con ID {cuenta_id} para el cliente {cliente_id}.")
-                return None
-
             cursor.execute("""
                 SELECT id, mes_facturacion, total_pago, interes_anterior_emision
                 FROM financiero.ren_liquidacion 
@@ -353,10 +340,8 @@ class CuentasActivasView(APIView):
             """, [cuenta_id])
             detalles_financieros = cursor.fetchall()
 
-            if not detalles_financieros:
-                print(f"No se encontraron detalles financieros para la cuenta con ID {cuenta_id}.")
-
-        detalles = [
+        # Formatear detalles financieros
+        return [
             {
                 "id": detalle[0],
                 "mes_facturacion": detalle[1],
@@ -366,12 +351,6 @@ class CuentasActivasView(APIView):
             for detalle in detalles_financieros
         ]
 
-        return {
-            "id": cuenta[0],
-            "direccion": cuenta[1],
-            "cliente": cliente_id,
-            "detalles_financieros": detalles
-        }
 
 
 
