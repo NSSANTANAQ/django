@@ -334,11 +334,7 @@ class CuentasActivasView(APIView):
         return cuentas_administracion_estructuradas
 
     def obtener_detalle_cuenta(self, cliente_id, cuenta_id):
-        """
-        Obtiene los detalles de una cuenta específica.
-        """
         with connections['railway'].cursor() as cursor:
-            # Verificar que la cuenta pertenece al cliente
             cursor.execute("""
                 SELECT id, direccion 
                 FROM administracion.ad_cuenta 
@@ -347,9 +343,9 @@ class CuentasActivasView(APIView):
             cuenta = cursor.fetchone()
 
             if not cuenta:
+                print(f"No se encontró la cuenta con ID {cuenta_id} para el cliente {cliente_id}.")
                 return None
 
-            # Consultar detalles financieros de la cuenta
             cursor.execute("""
                 SELECT id, mes_facturacion, total_pago, interes_anterior_emision
                 FROM financiero.ren_liquidacion 
@@ -357,7 +353,9 @@ class CuentasActivasView(APIView):
             """, [cuenta_id])
             detalles_financieros = cursor.fetchall()
 
-        # Formatear detalles financieros
+            if not detalles_financieros:
+                print(f"No se encontraron detalles financieros para la cuenta con ID {cuenta_id}.")
+
         detalles = [
             {
                 "id": detalle[0],
@@ -368,7 +366,6 @@ class CuentasActivasView(APIView):
             for detalle in detalles_financieros
         ]
 
-        # Estructurar cuenta con detalles
         return {
             "id": cuenta[0],
             "direccion": cuenta[1],
