@@ -9,13 +9,15 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'password']
 
+class DetalleFinancieroSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model =RenLiquidacion
+        fields = ['mes_facturacion', 'saldo', 'estado_liquidacion']
 
 class CuentaSerializer(serializers.ModelSerializer):
+    detalle_financiero = DetalleFinancieroSerializer(read_only=True)
     class Meta:
         model = AdCuenta
         fields = ['id', 'zona', 'sector', 'mz', 'direccion', 'nombre_calle', 'cliente', 'estado']
 
-class DetalleFinancieroSerializer(serializers.ModelSerializer):
-    class Meta:
-        model =RenLiquidacion
-        fields = ['mes_facturacion', 'saldo', 'estado_liquidacion']
