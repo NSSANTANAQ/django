@@ -13,7 +13,7 @@ class DetalleFinancieroSerializer(serializers.ModelSerializer):
 
     class Meta:
         model =RenLiquidacion
-        fields = ['mes_facturacion', 'saldo', 'estado_liquidacion']
+        fields = ['id','mes_facturacion', 'saldo', 'estado_liquidacion']
 
 class CuentaSerializer(serializers.ModelSerializer):
     detalle_financiero = DetalleFinancieroSerializer(read_only=True)
