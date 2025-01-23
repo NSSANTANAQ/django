@@ -255,6 +255,7 @@ class CuentasActivasView(APIView):
 
     def get(self, request):
         cedula_usuario = request.user.username  # Usuario autenticado
+        cuenta_id = request.GET.get("cuenta_id", None)  # Parámetro opcional para obtener detalles de una cuenta específica
 
         try:
             # Verificar si el cliente existe
@@ -265,7 +266,16 @@ class CuentasActivasView(APIView):
                     status=status.HTTP_404_NOT_FOUND
                 )
 
-            # Obtener cuentas activas
+            if cuenta_id:  # Obtener detalles de una cuenta específica
+                detalle_cuenta = self.obtener_detalle_cuenta(cliente_id, cuenta_id)
+                if not detalle_cuenta:
+                    return Response(
+                        {"error": "Cuenta no encontrada o no pertenece al cliente."},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+                return Response(detalle_cuenta, status=status.HTTP_200_OK)
+
+            # Obtener todas las cuentas activas
             cuentas_activas = self.obtener_cuentas_activas(cliente_id)
             if not cuentas_activas:
                 return Response(
@@ -310,45 +320,61 @@ class CuentasActivasView(APIView):
             """, [cliente_id])
             cuentas_administracion = cursor.fetchall()
 
-            # Consultar cuentas activas de la tabla financiero.ren_liquidacion
-            cursor.execute("""
-                SELECT id, mes_facturacion, total_pago, interes_anterior_emision
-                FROM financiero.ren_liquidacion 
-                WHERE cliente = %s AND estado_liquidacion = 2
-            """, [cliente_id])
-            cuentas_financiero = cursor.fetchall()
-
-        # Estructurar los resultados de administracion.ad_cuenta
+        # Estructurar los resultados
         cuentas_administracion_estructuradas = [
             {
-                "fuente": "administracion.ad_cuenta",
                 "id": cuenta[0],
                 "direccion": cuenta[1],
-                "mes_facturacion": None,
-                "total_pago": None,
-                "interes_emision_anterior": None,
+                "cliente": cliente_id,
             }
             for cuenta in cuentas_administracion
         ]
 
-        # Estructurar los resultados de financiero.ren_liquidacion
-        cuentas_financiero_estructuradas = [
+        # Retornar la lista de cuentas activas
+        return cuentas_administracion_estructuradas
+
+    def obtener_detalle_cuenta(self, cliente_id, cuenta_id):
+        """
+        Obtiene los detalles de una cuenta específica.
+        """
+        with connections['railway'].cursor() as cursor:
+            # Verificar que la cuenta pertenece al cliente
+            cursor.execute("""
+                SELECT id, direccion 
+                FROM administracion.ad_cuenta 
+                WHERE id = %s AND cliente = %s AND estado = 24
+            """, [cuenta_id, cliente_id])
+            cuenta = cursor.fetchone()
+
+            if not cuenta:
+                return None
+
+            # Consultar detalles financieros de la cuenta
+            cursor.execute("""
+                SELECT id, mes_facturacion, total_pago, interes_anterior_emision
+                FROM financiero.ren_liquidacion 
+                WHERE cuenta_id = %s AND estado_liquidacion = 2
+            """, [cuenta_id])
+            detalles_financieros = cursor.fetchall()
+
+        # Formatear detalles financieros
+        detalles = [
             {
-                "fuente": "financiero.ren_liquidacion",
-                "id": financiero[0],
-                "direccion": None,
-                "mes_facturacion": financiero[1],
-                "total_pago": financiero[2],
-                "interes_emision_anterior": financiero[3],
+                "id": detalle[0],
+                "mes_facturacion": detalle[1],
+                "total_pago": float(detalle[2]),
+                "interes_emision_anterior": float(detalle[3])
             }
-            for financiero in cuentas_financiero
+            for detalle in detalles_financieros
         ]
 
-        # Combinar resultados estructurados
-        cuentas_activas_result = cuentas_administracion_estructuradas + cuentas_financiero_estructuradas
-
-        # Retornar la lista combinada, o None si no hay resultados
-        return cuentas_activas_result if cuentas_activas_result else None
+        # Estructurar cuenta con detalles
+        return {
+            "id": cuenta[0],
+            "direccion": cuenta[1],
+            "cliente": cliente_id,
+            "detalles_financieros": detalles
+        }
 
 
 
