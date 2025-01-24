@@ -340,11 +340,27 @@ class CuentasActivasView(APIView):
             """, [cuenta_id])
             detalles_financieros = cursor.fetchall()
 
+            # Consultar el nombre del mes de cada mes_facturacion
+            detalles_con_nombre_mes = []
+            for detalle in detalles_financieros:
+                cursor.execute("""
+                            SELECT mes_nombre 
+                            FROM financiero.ren_mes_facturacion 
+                            WHERE id = %s
+                        """, [detalle[1]])  # detalle[1] es el mes_facturacion (ID del mes)
+                mes_result = cursor.fetchone()
+                mes_nombre = mes_result[0] if mes_result else "Desconocido"
+
+                detalles_con_nombre_mes.append({
+                    "mes_facturacion": mes_nombre,  # Usamos el nombre del mes en lugar del ID
+                    "total_pago": float(detalle[2]),
+                    "interes_emision_anterior": float(detalle[3])
+                })
+
         # Formatear detalles financieros
         return [
             {
-                "id": detalle[0],
-                "mes_facturacion": detalle[1],
+                "mes_facturacion": mes_nombre,
                 "total_pago": float(detalle[2]),
                 "interes_emision_anterior": float(detalle[3])
             }
