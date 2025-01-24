@@ -344,11 +344,27 @@ class CuentasActivasView(APIView):
             detalles_con_nombre_mes = []
             for detalle in detalles_financieros:
                 cursor.execute("""
-                            SELECT mes_nombre 
+                            SELECT mes,anio 
                             FROM financiero.ren_mes_facturacion 
                             WHERE id = %s
                         """, [detalle[1]])  # detalle[1] es el mes_facturacion (ID del mes)
                 mes_result = cursor.fetchone()
+
+                # Consultar detalles con mes y año
+                for mes_results in mes_result:
+                    mes_facturacion = mes_results[1]
+                    anio_facturacion = mes_results[2]
+                    mes_nombre = self.obtener_mes_nombre(mes_facturacion)
+
+                    detalles_con_nombre_mes.append({
+                        "id": detalle[0],
+                        "anio_facturacion": anio_facturacion,
+                        "mes_facturacion": mes_nombre,
+                        "total_pago": float(detalle[3]),
+                        "interes_emision_anterior": float(detalle[4])
+                    })
+
+
                 mes_nombre = mes_result[0] if mes_result else "Desconocido"
 
                 detalles_con_nombre_mes.append({
@@ -361,12 +377,21 @@ class CuentasActivasView(APIView):
         return [
             {
                 "mes_facturacion": mes_nombre,
+                "_facturacion": mes_nombre,
                 "total_pago": float(detalle[2]),
                 "interes_emision_anterior": float(detalle[3])
             }
             for detalle in detalles_financieros
         ]
 
-
+    def obtener_mes_nombre(self, mes):
+        """
+        Convierte el número del mes en su nombre.
+        """
+        meses = [
+            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        ]
+        return meses[mes - 1]
 
 
