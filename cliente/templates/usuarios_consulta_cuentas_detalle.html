@@ -1,0 +1,189 @@
+{% extends "menu_usuarios.html" %}
+{% load static %}
+{% block content %}
+
+<!--<div class="card border-0">-->
+<!--    <div class="card-header">-->
+<!--        <h5 class="card-title">-->
+<!--            Consulta tus Cuentas:-->
+<!--        </h5>-->
+<!--        <h6 class="card-subtitle text-muted">-->
+<!--            Datos del Usuario:-->
+<!--        </h6>-->
+<!--    </div>-->
+<!--    <div class="card-body">-->
+<!--        <table class="table">-->
+<!--            <tr class="table-secondary">-->
+<!--                <th>Cédula RUC</th>-->
+<!--                <th>Nombre</th>-->
+<!--                <th>Dirección</th> &lt;!&ndash; Puedes agregar otros campos según tu modelo &ndash;&gt;-->
+<!--            </tr>-->
+<!--            <tbody class="table-group-divider">-->
+<!--            <tr>-->
+<!--                <td>{{ cliente.cedula }}</td>-->
+<!--                <td>{{ cliente.nombre }}</td>-->
+<!--                <td>{{ cliente.direccion }}</td> &lt;!&ndash; Puedes agregar otros campos según tu modelo &ndash;&gt;-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+<!--    </div>-->
+<!--</div>-->
+<!-- card 1 -->
+<div class="card ">
+
+    <div class="card-header" >
+        <h5 class="card-title" style="display: flex; justify-content: space-between;">
+            <span>Detalle de la Cuenta:  {{ cuenta.8 }}</span>  <strong>Total a Pagar (A)+(B): {{ total }}</strong>
+        </h5>
+
+    </div>
+    <div class="table-responsive">
+        <div class="card-header text-bg-secondary">
+            <h6 class="card-subtitle">
+                    Facturas Vencidas
+                </h6>
+    </div>
+    <div class="card-body">
+
+       <table class="table">
+            <tr class="table-secondary">
+                <th>Cuenta</th>
+                <th>Vencidas</th>
+                <th>Adeudado</th>
+                <th>Interés</th>
+                <th>Valor (A)</th>
+
+                <!-- Agrega otros campos según tu modelo -->
+            </tr>
+           <tbody class="table-group-divider">
+            {% for cuenta in cuentas %}
+                <tr>
+                    <td>{{ cuenta.8 }}</td>
+                    <td>{{ cuenta_total }}</td>
+                    <td>{{ saldo_total }}</td>
+                    <td>{{ interes }}</td>
+                    <td>{{ subtotal }}</td>
+
+                </tr>
+             {% empty %}
+                    <!-- Si no hay resultados -->
+                    <tr>
+                        <td colspan="5" class="text-center">No se encontraron cuentas asociadas a este usuario</td>
+                    </tr>
+
+            {% endfor %}
+           </tbody>
+        </table>
+    </div>
+<!-- card 2 -->
+        <div class="card-header text-bg-secondary">
+            <h6 class="card-subtitle">
+                    Mensual
+                </h6>
+    </div>
+
+    <div class="card-body">
+       <table class="table">
+            <tr class="table-secondary">
+                <th>Cuenta</th>
+                <th>Mes</th>
+                <th>valor (B)</th>
+
+                <!-- Agrega otros campos según tu modelo -->
+            </tr>
+           <tbody class="table-group-divider">
+            {% for cuenta in cuentas %}
+                <tr>
+                    <td>{{ cuenta.8 }}</td>
+                    <td>{{ mes_facturacion.5|date:"F" }}</td>
+                    <td>{{ cuenta.4 }}</td>
+
+                </tr>
+             {% empty %}
+                    <!-- Si no hay resultados -->
+                    <tr>
+                        <td colspan="5" class="text-center">No se encontraron cuentas asociadas a este usuario</td>
+                    </tr>
+
+            {% endfor %}
+           </tbody>
+        </table>
+    </div>
+
+        <div class="card-header text-bg-secondary">
+            <h6 class="card-subtitle">
+                    Convenios
+            </h6>
+    </div>
+    <div class="card-body">
+       <table class="table">
+            <tr class="table-secondary" >
+                <th>Solicitud</th>
+                <th>Inicio</th>
+                <th>Estado</th>
+
+                <!-- Agrega otros campos según tu modelo -->
+            </tr>
+           <tbody class="table-group-divider">
+                 {% if convenios %}
+                <tr>
+                    <td>{{ convenios.0}}</td>
+                    <td>{{ convenios.3|date:"F" }}</td>
+                    {% if convenios.9 == 2 %}
+                    <td>Por Pagar</td>
+                    {% endif %}
+
+                </tr>
+                 {% else %}
+                <td colspan="5" class="text-center">No se encontraron convenios asociados a esta cuenta</td>
+            {% endif %}
+
+           </tbody>
+        </table>
+
+    </div>
+
+    </div>
+</div>
+
+<style>
+    .card {
+        width: 100%; /* Ajusta el ancho al 90% del contenedor padre */
+        max-height: 510px; /* Tamaño máximo para pantallas grandes */
+        margin: 0 auto; /* Centrar el card */
+    }
+
+    .card-body {
+        padding: 20px; /* Más espacio interno en el contenido */
+    }
+
+    .table {
+        width: 100%; /* Asegura que la tabla ocupe todo el espacio disponible */
+    }
+
+    .card-header {
+        font-size: 1.1rem; /* Aumenta el tamaño del texto del encabezado */
+    }
+</style>
+
+
+<style>
+/* Estilo para la tabla que permitirá el scroll vertical */
+.table-responsive {
+  /* Establece la altura máxima de la tabla */
+  overflow-y: auto;
+}
+
+
+/* Fija los encabezados de la tabla */
+.table thead th {
+  position: sticky;
+  top: -1px;
+  z-index: 1;
+}
+
+</style>
+<script>
+    window.history.pushState({}, document.title, "/");
+</script>
+{% endblock %}

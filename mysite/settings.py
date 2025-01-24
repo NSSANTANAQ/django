@@ -11,7 +11,16 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
+
+import firebase_admin
+from django.contrib.messages import constants as messages
+from decouple import config
+from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +29,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-rc^*w^w&6g9_(uvx#6s*bnt!w)l0rdi%!l7mv#y%uc&x%wo5pk'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['googleapis.com','serviciosenlinea.epmapas.gob.ec', 'django-server-production-b121.up.railway.app']
 
 # FORM SUBMISSION
 # Comment out the following line and place your railway URL, and your production URL in the array.
@@ -41,6 +45,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
+    'cloudinary_storage',
+    'accounts',
+    'cliente',
+    'administrador',
+    'apis',
+    'rest_framework',
+    'rest_framework_simplejwt',
+
 ]
 
 MIDDLEWARE = [
@@ -81,15 +94,58 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ["PGDATABASE"],
-        'USER': os.environ["PGUSER"],
-        'PASSWORD': os.environ["PGPASSWORD"],
-        'HOST': os.environ["PGHOST"],
-        'PORT': os.environ["PGPORT"],
-    }
+        'NAME': "railway",
+        'USER': "postgres",
+        'PASSWORD': "XWNyYyJwiuHcXmaHxkbAozJjHZKNqTeT",
+        # 'HOST': "autorack.proxy.rlwy.net",
+        # 'PORT': "15788",
+        'HOST': "postgres.railway.internal",
+        'PORT': "5432",
+    },
+    'railway': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Ejemplo con PostgreSQL
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'TzOSnbbVhSPuqzcHtDeDQxeFPtfuDCie',
+        # 'HOST': 'junction.proxy.rlwy.net',
+        # 'PORT': '29129',
+        'HOST': "meticulous-empathy.railway.internal",
+        'PORT': "5432",
+        # 'OPTIONS': {
+        #     'options': '-c search_path=administracion,auditoria,financiero,seguridad'
+        # }
+    },
 }
 
+LOGIN_URL = 'login'
 
+LOGIN_REDIRECT_URL = '/cliente/menu_usuarios/'
+
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://serviciosenlinea.epmapas.gob.ec',
+    'https://django-server-production-b121.up.railway.app',
+    'https://googleapis.com',
+]
+
+# Si se establece en True, la sesión se eliminará cuando el usuario cierre el navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "accounts/static")]
+
+# Si usas archivos de usuario/media, también configúralos
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'accounts/media')
+
+
+# CSRF_COOKIE_SECURE = True
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -112,23 +168,99 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Guayaquil'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MESSAGE_TAGS = {
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}
+
+# Correo electronico
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.epmapas.gob.ec'  # Tu servidor SMTP
+EMAIL_PORT = 465  # Puerto de tu servidor SMTP
+EMAIL_USE_SSL = True  # Usar TLS para el correo electrónico
+EMAIL_HOST_USER = 'serviciosenlinea@epmapas.gob.ec'  # Tu dirección de correo
+EMAIL_HOST_PASSWORD = 'EPMAPAS2024****'  # Contraseña de tu correo
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+}
+
+# Configura Cloudinary como el almacenamiento predeterminado para archivos media
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+load_dotenv()
+# Carga la clave secreta directamente desde las variables de entorno
+SECRET_KEY = os.getenv('SECRET_KEY', 'clave-secreta-por-defecto')
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
+CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME', 'cloud_name_por_defecto')
+CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY', 'api_key_por_defecto')
+CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', 'api_secret_por_defecto')
+
+
+VAPID_PUBLIC_KEY = os.getenv('VAPID_PUBLIC_KEY', 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEKEElM7spZZ7D1TnCnY+h2J6vBUsFUDQGS2a3LljuNN+XUKrNXfjm2LgIeIKgDtsfBPK2DerAadgAVbcKcEOMxg==')
+VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', 'MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg5S0VPwrTvZY2+v2i8gJvshZM1ZWS0ECreh7R5BT7WTOhRANCAAQoQSUzuyllnsPVOcKdj6HYnq8FSwVQNAZLZrcuWO4035dQqs1d+ObYuAh4gqAO2x8E8rYN6sBp2ABVtwpwQ4zG')
+VAPID_EMAIL = os.getenv('VAPID_EMAIL', "mailto:nestorsantana12@gmail.com")
+
+# Configuración de JWT
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+FCM_SERVER_KEY = os.getenv("FCM_SERVER_KEY")
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Tiempo de vigencia del token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Tiempo de vigencia del refresh token
+    'ROTATE_REFRESH_TOKENS': True,                   # Permitir rotación de tokens
+    'BLACKLIST_AFTER_ROTATION': True,                # Invalidar tokens antiguos
+}
+
+import os
+from firebase_admin import credentials, initialize_app, messaging
+
+# Configurar credenciales desde variables de entorno
+cred = credentials.Certificate({
+    "type": config("FIREBASE_TYPE"),
+    "project_id": config("FIREBASE_PROJECT_ID"),
+    "private_key_id": config("FIREBASE_PRIVATE_KEY_ID"),
+    "private_key": config("FIREBASE_PRIVATE_KEY").replace("\\n", "\n"),
+    "client_email": config("FIREBASE_CLIENT_EMAIL"),
+    "client_id": config("FIREBASE_CLIENT_ID"),
+    "auth_uri": config("FIREBASE_AUTH_URI"),
+    "token_uri": config("FIREBASE_TOKEN_URI"),
+    "auth_provider_x509_cert_url": config("FIREBASE_AUTH_PROVIDER_CERT_URL"),
+    "client_x509_cert_url": config("FIREBASE_CLIENT_CERT_URL")
+})
+
+
+if not firebase_admin._apps:  # Evitar múltiples inicializaciones
+    firebase_admin.initialize_app(cred)
+
