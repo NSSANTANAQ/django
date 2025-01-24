@@ -344,45 +344,26 @@ class CuentasActivasView(APIView):
             detalles_con_nombre_mes = []
             for detalle in detalles_financieros:
                 cursor.execute("""
-                            SELECT mes,anio 
-                            FROM financiero.ren_mes_facturacion 
-                            WHERE id = %s
-                        """, [detalle[1]])  # detalle[1] es el mes_facturacion (ID del mes)
+                    SELECT mes, anio 
+                    FROM financiero.ren_mes_facturacion 
+                    WHERE id = %s
+                """, [detalle[1]])  # detalle[1] es el mes_facturacion (ID del mes)
                 mes_result = cursor.fetchone()
 
-                # Consultar detalles con mes y año
-                for mes_results in mes_result:
-                    mes_facturacion = mes_results[1]
-                    anio_facturacion = mes_results[2]
+                if mes_result:
+                    mes_facturacion = mes_result[0]  # mes
+                    anio_facturacion = mes_result[1]  # anio
                     mes_nombre = self.obtener_mes_nombre(mes_facturacion)
-
+                    mes_anio = f"{mes_nombre} - {anio_facturacion}"
                     detalles_con_nombre_mes.append({
                         "id": detalle[0],
-                        "anio_facturacion": anio_facturacion,
-                        "mes_facturacion": mes_nombre,
-                        "total_pago": float(detalle[3]),
-                        "interes_emision_anterior": float(detalle[4])
+                        "fecha_facturacion": mes_anio,
+                        "total_pago": float(detalle[2]),
+                        "interes_emision_anterior": float(detalle[3])
                     })
 
-
-                mes_nombre = mes_result[0] if mes_result else "Desconocido"
-
-                detalles_con_nombre_mes.append({
-                    "mes_facturacion": mes_nombre,  # Usamos el nombre del mes en lugar del ID
-                    "total_pago": float(detalle[2]),
-                    "interes_emision_anterior": float(detalle[3])
-                })
-
-        # Formatear detalles financieros
-        return [
-            {
-                "mes_facturacion": mes_nombre,
-                "_facturacion": mes_nombre,
-                "total_pago": float(detalle[2]),
-                "interes_emision_anterior": float(detalle[3])
-            }
-            for detalle in detalles_financieros
-        ]
+            # Retornar detalles financieros con el mes y el año ya formateados
+            return detalles_con_nombre_mes
 
     def obtener_mes_nombre(self, mes):
         """
@@ -393,5 +374,6 @@ class CuentasActivasView(APIView):
             "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
         ]
         return meses[mes - 1]
+
 
 
